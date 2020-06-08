@@ -311,7 +311,7 @@
               <div class="col-3"> <button type="button" class="btn btn-primary" onclick="functionSaveEdit()" style="width : 100px" data-dismiss="modal">Save</button></div>
               <div class="col-3"> <button type="button" class="btn btn-danger" style="width : 100px" data-dismiss="modal">Close</button></textarea></div>
        
-            </div>
+            </div>  
             
             
         </div>
