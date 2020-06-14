@@ -51,6 +51,17 @@ class Product_model extends CI_Model
         return $query;
     }
 
+    public function getAllProductItems()
+    {
+        $this->db->select('*');
+        $this->db->from('tbl_product_items');  
+        $this->db->order_by("product_id", "asc");
+        $query = $this->db->get();
+      //  $result = $query->result(); 
+  
+        return $query;
+    }
+
     
     public function getProductDetailByID($id)
     {

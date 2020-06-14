@@ -245,7 +245,7 @@ class Loaddatatable extends CI_Controller {
         $start = intval($this->input->get("start"));
         $length = intval($this->input->get("length")); 
 
-        $allProduct = $this->product_model->getAllProduct();
+        $allProduct = $this->product_model->getAllProductItems();
 
         $data = [];
         $index = 0;
@@ -254,6 +254,8 @@ class Loaddatatable extends CI_Controller {
             $typeCose = "";
             if($_SESSION["costType"] == "usd-01"){
                 $typeCose = $r->product_usd01;
+            }else if($_SESSION["costType"] == "usd-03"){
+                $typeCose = $r->product_usd03;
             }else if($_SESSION["costType"] == "usd-05"){
                 $typeCose = $r->product_usd05;
             }else if($_SESSION["costType"] == "usd-08"){
@@ -271,15 +273,15 @@ class Loaddatatable extends CI_Controller {
             $product_name = $r->product_name;
             $product_desc = $r->product_desc;
             $product_size = $r->product_size;
-            $product_detail_id = $r->product_detail_id;
-            $col = $r->product_colors;
-            $colors = explode('|', $col); 
+            $product_id = $r->product_id;
+            $color = $r->product_colors;
+           // $colors = explode('|', $col); 
             
-            $colorOption = "";  
+            // $colorOption = "";  
            
-            foreach($colors as $c){ 
-                $colorOption .= "<option> $c</option>";  
-            } 
+            // foreach($colors as $c){ 
+            //     $colorOption .= "<option> $c</option>";  
+            // } 
 
 
             if(isset($_SESSION['userType'])){
@@ -289,12 +291,10 @@ class Loaddatatable extends CI_Controller {
                         $product_name,
                         $product_desc,
                         $product_size, 
-                        '<select class="form-control" title="Pick a number" name="color" id="color'.$index.'"  style="width: 200px;">'
-                            .$colorOption.  
-                        '<option>Pls specify</option></select>',
+                        $color ,
                         $typeCose.'$', 
                         '<input type="number" class="form-control" id="qty'.$index.'" name="qty">', 
-                        '<a onclick="showTableData('.$index.','.$product_detail_id.','."'$product_name'".','."'$product_size'".','.$typeCose.','."'$product_desc'".')" class="btn btn-primary mr-1" style="text-align: center;">ADD</a>',
+                        '<a onclick="addData('.$index.','.$product_id.','."'$product_name'".','."'$product_size'".','."'$color'".','.$typeCose.','."'$product_desc'".')" class="btn btn-primary mr-1" style="text-align: center;">ADD</a>',
                         
                     );
                 }else{
@@ -303,12 +303,10 @@ class Loaddatatable extends CI_Controller {
                         $product_name,
                         $product_desc,
                         $product_size, 
-                        '<select class="form-control" title="Pick a number" name="color" id="color'.$index.'"  style="width: 200px;">'
-                            .$colorOption.  
-                        '<option>Pls specify</option></select>',
+                        $color,
                         $typeCose.'$', 
                         '<input type="number" class="form-control" style="text-align: center; width: 20%;" id="qty'.$index.'" name="qty">', 
-                        '<a onclick="showTableData('.$index.','.$product_detail_id.','."'$product_name'".','."'$product_size'".','.$typeCose.','."'$product_desc'".')" class="btn btn-primary mr-1" style="text-align: center;">ADD</a>',
+                        '<a onclick="addData('.$index.','.$product_id.','."'$product_name'".','."'$product_size'".','."'$color'".','.$typeCose.','."'$product_desc'".')" class="btn btn-primary mr-1" style="text-align: center;">ADD</a>',
                         
                     );
                 }
@@ -332,6 +330,34 @@ class Loaddatatable extends CI_Controller {
     
 
     public function add()
+    {
+        $id = $this->input->post('id');
+        $name = $this->input->post('name');
+        $size = $this->input->post('size');
+        $color = $this->input->post('color');
+        $cost =  $this->input->post('cost');
+        //$costSprit = explode("$", $cost);
+        $qty = $this->input->post('qty'); 
+        $desc = $this->input->post('desc'); 
+
+        console.log($id);
+  
+        $product = array(
+            'id'      => $id,
+            'name'    => $name, 
+            'qty'     => $qty,
+            'price'   => $cost,
+            'options' => array('size' => $size, 'color' => $color, 'desc' => $desc)
+            
+        );
+     
+        $this->cart->insert($product); 
+        
+        $this->session->set_userdata('test',count($this->cart->contents()));
+        $this->session->set_userdata('name',$this->input->post('name'));
+    }
+
+    public function add_product()
     {
         $id = $this->input->post('id');
         $name = $this->input->post('name');

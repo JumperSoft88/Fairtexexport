@@ -10,10 +10,10 @@
 
   <title>Fairtex</title>
 
-  <!-- Custom fonts for this theme -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css" rel="stylesheet" type="text/css">
+  <!-- Custom fonts for this theme --> 
   <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
   <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css">
 
   <link rel="stylesheet" href="<?php echo base_url(); ?>assets/css/bootstrap.min.css">
   <!-- Theme CSS -->
@@ -218,10 +218,30 @@
                                 <th style="text-align: center; width: 15%;">Color</th>
                                 <th style="text-align: center; width: 10%;">Cost</th>
                                 <th style="text-align: center; width: 20%;">Qty.</th> 
+                                <th style="text-align: center; width: 15%;">Total</th> 
                                 <th style="text-align: center; width: 15%;"></th> 
                             </tr>
                         </thead>
                         <tbody  style="text-align: center;">
+                            <?php $i = 1; ?> 
+                            <?php foreach ($this->cart->contents() as $items): ?>
+                        
+                            <tr> 
+                                <td><?php echo($items['name'])  ?></td>
+                                <td><?php echo($items['options']['desc']) ?></td>
+                                <td><?php echo($items['options']['size'])  ?></td>
+                                <td><?php echo($items['options']['color'])  ?></td>
+                                <td><?php echo($items['price'])  ?>$</td>
+                                <td><?php echo($items['qty'])  ?></td>
+                                <td><?php echo($items['price']*$items['qty'])  ?>$</td>
+                                <td><a class="btn btn-danger" onclick="funcDel('<?php echo($items['rowid']) ?>')"><i class="fa fa-trash-o fa-lg"></i> </a></td>
+                            </tr>
+                            
+
+                            <?php $i++; ?> 
+                            <?php endforeach; ?>
+ 
+                         
                         
                         </tbody>
                     </table> 
@@ -238,7 +258,7 @@
 </body>
 
 <div class="modal" id="mdBuyProduct" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-xl" role="document">
+    <div class="modal-dialog modal-lg" role="document">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">Buy Product</h5>
@@ -274,6 +294,29 @@
       </div>
     </div>
   </div>
+
+
+ 
+  <!-- Modal -->
+<div class="modal fade" id="modalConfirmDelete" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Delete</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to delete this item?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">No</button>
+        <button type="button" class="btn btn-danger">Yes</button>
+      </div>
+    </div>
+  </div>
+</div>
     
  <!-- Footer -->
  <footer class="footer text-center bg">
@@ -348,15 +391,13 @@
   <!-- Custom scripts for this template -->
   <script src="<?php echo base_url(); ?>assets/js/freelancer.min.js"></script>
 
-  <script>     
+  <script> 
+ 
+    $('#mdBuyProduct').on('hidden.bs.modal', function () {
+        window.location.reload();
+    })
 
-    // $('.item-list').DataTable({ 
-    //     "ajax": {
-    //             url : "<?php echo base_url(); ?>/loaddatatable/get_items",
-    //             type : 'GET' 
-    //         }, 
-    // });
-
+    
     function funcBuy(){
 
         $('.item-list').DataTable({ 
@@ -367,6 +408,10 @@
         });
 
         $("#mdBuyProduct").modal('show');
+    }
+
+    function funcDel(rowid) {
+        $("#modalConfirmDelete").modal('show');
     }
  
  
@@ -418,6 +463,32 @@ function showTableData(tableId,id,name,size,typeCose,description){
       }); 
 }
  
+function addData(tableId,id,name,size,color,typeCose,description){  
+ 
+    var qtyId = "qty"+tableId;
+    var qty = document.getElementById(qtyId).value; 
+
+   $.ajax({
+       url: '<?php echo base_url(); ?>loaddatatable/add_product',
+       type: 'POST',
+       data: {id : id,
+              name : name, 
+              size : size,
+              color : color,
+              cost : typeCose,
+              qty : qty,
+              desc : description},
+       error: function() {
+          alert('Something is wrong');
+       },
+       success: function(data) {
+   
+            alert("Record added successfully");   
+            
+       }
+    }); 
+}
+
 </script>
 </body>
  
