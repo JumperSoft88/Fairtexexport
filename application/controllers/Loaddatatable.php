@@ -430,6 +430,6 @@ class Loaddatatable extends CI_Controller {
             'customerType' => $customerType 
         );
 
-       $this->load->view('wholesale/productDatatable',$dataCust);
+       $this->load->view('wholesale/buyProduct',$dataCust);
     }
 }
