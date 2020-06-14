@@ -187,7 +187,7 @@
                     </div>
                 </div> 
 
-                <div style="text-align:right;" > <button class="btn btn-success"  type="submit">Check out.</button></a> </div>
+                <!-- <div style="text-align:right;" > <button class="btn btn-success"  type="submit">Check out.</button></a> </div> -->
             </form>
 
 
@@ -195,24 +195,11 @@
         }
         ?>  
 
-        <?php if(isset($_SESSION['userType'])){
-        if($_SESSION['userType'] == 'administrator'){?>
-
-            <div class="row">
-                <div align="left" class="col-2"><a  href = "#" class="btn btn-primary mr-1">New Product</a></div>
-                <div align="left" class="col-2"><a  href = "<?php echo base_url(); ?>login/member" class="btn btn-danger mr-1">New Invoice</a></div>
-                <div class="col-6"></div>
-                <div align="right" class="col-2"><a id="check" href="<?php echo base_url(); ?>checkout" class="btn btn-success " style="width :120px;">Check out.</a></div>
-            </div> 
-            <?php }else{ if($customerType != 'new'){?>
-
+        
             <div class="row">
                 <div class="col-10"></div>
-                <div class="col-2"><a id="check" href="<?php echo base_url(); ?>checkout" class="btn btn-success " style="width :120px;">Check out.</a></div> 
+                <div class="col-2"><a id="addBuy" onclick="funcBuy()" type="submit"  class="btn btn-primary " style="width :120px;">ADD.</a></div> 
             </div> 
-            <?php } }
-        }?>
-
     </div>
  
   </header>
@@ -221,7 +208,7 @@
     <div class="container-fluid"> 
             <div class="row">  
                 <div class="col-12">  
-                    <table id="item-list" class="table table-bordered table-striped table-hover item-list"> 
+                    <table id="buy-item-list" class="table table-bordered table-striped table-hover buy-item-list"> 
                         <thead>
                             <tr> 
                                 <!-- <th hidden >Product</th> -->
@@ -249,6 +236,44 @@
         </div>
     </div>
 </body>
+
+<div class="modal" id="mdBuyProduct" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-xl" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Buy Product</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body"> 
+            <div class="container-fluid"> 
+                <div class="row">  
+                    <div class="col-12">  
+                        <table id="item-list" class="table table-bordered table-striped table-hover item-list"> 
+                            <thead>
+                                <tr> 
+                                    <!-- <th hidden >Product</th> -->
+                                    <th style="text-align: center; width: 20%;">Product name</th>
+                                    <th style="text-align: center; width: 30%;">Description</th>
+                                    <th style="text-align: center; width: 10%;">Size</th>
+                                    <th style="text-align: center; width: 15%;">Color</th>
+                                    <th style="text-align: center; width: 10%;">Cost</th>
+                                    <th style="text-align: center; width: 20%;">Qty.</th> 
+                                    <th style="text-align: center; width: 15%;"></th> 
+                                </tr>
+                            </thead>
+                            <tbody  style="text-align: center;">
+                            
+                            </tbody>
+                        </table> 
+                    </div>  
+                </div>
+            </div> 
+        </div> 
+      </div>
+    </div>
+  </div>
     
  <!-- Footer -->
  <footer class="footer text-center bg">
@@ -325,12 +350,25 @@
 
   <script>     
 
-    $('.item-list').DataTable({ 
-        "ajax": {
-                url : "<?php echo base_url(); ?>/loaddatatable/get_items",
+    // $('.item-list').DataTable({ 
+    //     "ajax": {
+    //             url : "<?php echo base_url(); ?>/loaddatatable/get_items",
+    //             type : 'GET' 
+    //         }, 
+    // });
+
+    function funcBuy(){
+
+        $('.item-list').DataTable({ 
+            "ajax": {
+                url : "<?php echo base_url(); ?>/loaddatatable/get_product_items",
                 type : 'GET' 
             }, 
-    });
+        });
+
+        $("#mdBuyProduct").modal('show');
+    }
+ 
  
   </script>
   <script> 
