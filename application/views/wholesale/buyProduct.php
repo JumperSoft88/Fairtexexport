@@ -195,11 +195,20 @@
         }
         ?>  
 
-        
+<!--         
             <div class="row">
                 <div class="col-10"></div>
                 <div class="col-2"><a id="addBuy" onclick="funcBuy()" type="submit"  class="btn btn-primary " style="width :120px;">ADD.</a></div> 
+            </div>  -->
+
+      
+            <div class="row">
+                <div align="left" class="col-2"><a id="addBuy" onclick="funcBuy()" type="submit"  class="btn btn-primary " style="width :120px;font-family:verdana;color:white;">Add <i class="fa fa-plus-circle" aria-hidden="true"></i></a></div>
+                <div align="left" class="col-2"></div>
+                <div class="col-6"></div>
+                <div align="right" class="col-2"><a id="check" href="<?php echo base_url(); ?>checkout" class="btn btn-success " style="width :120px;">Check out <i class="fa fa-shopping-cart" aria-hidden="true"></i></a></div>
             </div> 
+              
     </div>
  
   </header>
@@ -208,7 +217,7 @@
     <div class="container-fluid"> 
             <div class="row">  
                 <div class="col-12">  
-                    <table id="buy-item-list" class="table table-bordered table-striped table-hover buy-item-list"> 
+                    <table id="buy-item-list" class="table table-bordered  buy-item-list">  
                         <thead>
                             <tr> 
                                 <!-- <th hidden >Product</th> -->
@@ -232,9 +241,10 @@
                                 <td><?php echo($items['options']['size'])  ?></td>
                                 <td><?php echo($items['options']['color'])  ?></td>
                                 <td><?php echo($items['price'])  ?>$</td>
-                                <td><?php echo($items['qty'])  ?></td>
+                                <!-- <td><?php echo($items['qty'])  ?></td> -->
+                                <td style="text-align: center;" class='edit' value="<?= $items['rowid'] ?>" >  <input  style="border-style: none;"  type="text" name="quantity" id="<?= $items['rowid'] ?>" class="text-center" value="<?= $items['qty'] ?>" /> </td>
                                 <td><?php echo($items['price']*$items['qty'])  ?>$</td>
-                                <td><a class="btn btn-danger" onclick="funcDel('<?php echo($items['rowid']) ?>')"><i class="fa fa-trash-o fa-lg"></i> </a></td>
+                                <td><a class="btn btn-danger btn-rounded btn-sm my-0" style="font-family:verdana;color:white;" onclick="delCart('<?= $items['rowid'] ?>')"><i class="fa fa-trash-o fa-lg"></i> </a></td>
                             </tr>
                             
 
@@ -298,7 +308,7 @@
 
  
   <!-- Modal -->
-<div class="modal fade" id="modalConfirmDelete" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<!-- <div class="modal fade" id="modalConfirmDelete" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -312,11 +322,11 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" data-dismiss="modal">No</button>
-        <button type="button" class="btn btn-danger">Yes</button>
+        <button type="button" class="btn btn-danger" >Yes</button>
       </div>
     </div>
   </div>
-</div>
+</div> -->
     
  <!-- Footer -->
  <footer class="footer text-center bg">
@@ -396,6 +406,49 @@
     $('#mdBuyProduct').on('hidden.bs.modal', function () {
         window.location.reload();
     })
+
+    $(document).ready(function(){
+     
+      // Save data
+      $(".edit").focusout(function(e){
+        var rowid = $(this).attr('value')
+        var qty =  document.getElementById(rowid).value;
+
+        //alert(rowid);
+  
+          $.ajax({
+            url: '<?php echo base_url(); ?>loaddatatable/updateCart',
+            type: 'POST',
+            data: {rowid : rowid,
+                  qty : qty
+
+            },
+            error: function() {
+              alert('Something is wrong');
+            },
+            success: function(response) { 
+            location.reload();
+                //$("#productTable").load(window.location + " #productTable");
+            }
+        }); 
+      }); 
+   });
+
+   function delCart(rowid){ 
+        $.ajax({
+           url: '<?php echo base_url(); ?>loaddatatable/removeCart',
+           type: 'POST',
+           data: {rowid : rowid },
+           error: function() {
+              alert('Something is wrong');
+           },
+           success: function(response) { 
+            location.reload();
+               // $("#productTable").load(window.location + " #productTable");
+           }
+        }); 
+ 
+    }
 
     
     function funcBuy(){

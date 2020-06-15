@@ -100,8 +100,8 @@
         </div> 
     </div>
     <br><br>
-    <!-- <!?php echo $_SESSION['customerName'];  ?> -->
-    <form class="login100-form validate-form" action="<?php echo base_url(); ?>report" method="POST">
+    <!-- <!?php echo $_SESSION['customerName'];  ?> action="<?php echo base_url(); ?>report" method="POST" -->
+    <form class="login100-form validate-form" action="#" method="POST">
     <div class="container">
         <div class="row"> 
             <div class="col-4"> 
@@ -156,7 +156,7 @@
                 <th scope="col" style="text-align: center;" width="10%">Qty.</th> 
                 <th scope="col" style="text-align: center;" width="15%">UNIT PRICE</th>
                 <th scope="col" style="text-align: center;" width="20%">AMOUNT (USD)</th>
-                <th scope="col" style="text-align: center;" width="5%"></th>
+                <!-- <th scope="col" style="text-align: center;" width="5%"></th> -->
               </tr>
             </thead>
             <tbody>
@@ -168,11 +168,12 @@
                 <td style="text-align: center;"><?= $items['options']['desc']  ?></td>
                 <td style="text-align: center;"><?= $items['options']['size'] ?></td>
                 <td style="text-align: center;"><?= $items['options']['color'] ?></td>
-                <td style="text-align: center;" class='edit' value="<?= $items['rowid'] ?>" >  <input  style="border-style: none;"  type="text" name="quantity" id="<?= $items['rowid'] ?>" class="text-center" value="<?= $items['qty'] ?>" /> </td>
+                <!-- <td style="text-align: center;" class='edit' value="<?= $items['rowid'] ?>" >  <input  style="border-style: none;"  type="text" name="quantity" id="<?= $items['rowid'] ?>" class="text-center" value="<?= $items['qty'] ?>" /> </td> -->
+                <td style="text-align: center;"><?= $items['qty'] ?></td>
                 <td style="text-align: center;"><?= $items['price'].'$' ?></td>
                 <td style="text-align: center;"><?= $items['subtotal'].'$' ?></td>
-                <td style="text-align: center;"><span class="table-remove"><button type="button" onclick="delCart('<?= $items['rowid'] ?>')"
-                  class="btn btn-danger btn-rounded btn-sm my-0">Remove</button></span></td>  
+                <!-- <td style="text-align: center;"><span class="table-remove"><button type="button" onclick="delCart('<?= $items['rowid'] ?>')"
+                  class="btn btn-danger btn-rounded btn-sm my-0">Remove</button></span></td>   -->
               </tr>
 
               <?php
@@ -255,16 +256,17 @@
           <div class="row"> 
             <?php if(isset($_SESSION['userType'])){
               if($_SESSION['userType'] == 'administrator'){?>
-                  <div class="col-2"><a href="<?php echo base_url(); ?>loaddatatable" class="btn btn-success " style="width :120px;">Back</a> </div>  
+                  <!-- <div class="col-2"><a href="<?php echo base_url(); ?>loaddatatable" class="btn btn-success " style="width :120px;">Back</a> </div>   -->
+                  <div class="col-2"><a href="<?php echo base_url(); ?>loaddatatable/" class="btn btn-success " style="width :120px;">Back</a> </div> 
               <?php }else{  ?>
                 <div class="col-2"><a href="<?php echo base_url(); ?>loaddatatable/customer/<?php echo $_SESSION['costType_url']?>" class="btn btn-success " style="width :120px;">Back</a> </div>  
               <?php }} ?>
-            <div class="col-8"></h6></div>
+            <div class="col-7"></div>
  
             <?php if(isset($_SESSION['userType'])){
 
             if($_SESSION['userType'] == 'administrator'){?>
-                <div class="col-2"><button  class="btn btn-success">Export Invoice.</button></div>
+                <div class="col-3"><button  class="btn btn-success">Export Invoice.</button></div>
             <?php }else{?>  
                <div class="col-2"><a href="<?php echo base_url(); ?>export/excel" class="btn btn-success" style="width :120px;">Sent order.</a></div>
 

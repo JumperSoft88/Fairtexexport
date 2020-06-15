@@ -40,7 +40,8 @@ class Loaddatatable extends CI_Controller {
             'customerType' => $type 
         );
         
-        $this->load->view('wholesale/productDatatable', $dataCust);   
+        // $this->load->view('wholesale/productDatatable', $dataCust);   
+        $this->load->view('wholesale/buyProduct', $dataCust);   
     }
 
     public function customer($data)
@@ -294,7 +295,7 @@ class Loaddatatable extends CI_Controller {
                         $color ,
                         $typeCose.'$', 
                         '<input type="number" class="form-control" id="qty'.$index.'" name="qty">', 
-                        '<a onclick="addData('.$index.','.$product_id.','."'$product_name'".','."'$product_size'".','."'$color'".','.$typeCose.','."'$product_desc'".')" class="btn btn-primary mr-1" style="text-align: center;">ADD</a>',
+                        '<a onclick="addData('.$index.','.$product_id.','."'$product_name'".','."'$product_size'".','."'$color'".','.$typeCose.','."'$product_desc'".')" class="btn btn-primary mr-1" style="text-align:center;color:white;background-color:orange;"> <i class="fa fa-shopping-cart" aria-hidden="true"></i></a>',
                         
                     );
                 }else{
@@ -306,7 +307,7 @@ class Loaddatatable extends CI_Controller {
                         $color,
                         $typeCose.'$', 
                         '<input type="number" class="form-control" style="text-align: center; width: 20%;" id="qty'.$index.'" name="qty">', 
-                        '<a onclick="addData('.$index.','.$product_id.','."'$product_name'".','."'$product_size'".','."'$color'".','.$typeCose.','."'$product_desc'".')" class="btn btn-primary mr-1" style="text-align: center;">ADD</a>',
+                        '<a onclick="addData('.$index.','.$product_id.','."'$product_name'".','."'$product_size'".','."'$color'".','.$typeCose.','."'$product_desc'".')" class="btn btn-primary mr-1" style="text-align: center;color:white;background-color:orange;"> <i class="fa fa-shopping-cart" aria-hidden="true"></i></a>',
                         
                     );
                 }
