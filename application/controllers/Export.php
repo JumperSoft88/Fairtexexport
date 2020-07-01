@@ -1,5 +1,13 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
+
+require 'vendor/autoload.php';
+
+ 
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
 class Export extends CI_Controller {
 
     public function __construct() {
@@ -15,7 +23,7 @@ class Export extends CI_Controller {
           require(APPPATH.'third_party/PHPExcel-1.8/Classes/PHPExcel.php');
           require(APPPATH.'third_party/PHPExcel-1.8/Classes/PHPExcel/Writer/Excel2007.php');
 
-          $this->load->view('wholesale/checkComplete');
+         // $this->load->view('wholesale/checkComplete');
         /** 
          * Insert to DB
         */
@@ -243,7 +251,7 @@ class Export extends CI_Controller {
 
         // Redirect output to a client’s web browser (Excel5)
         header('Content-Type: application/vnd.ms-excel; charset=UTF-8');
-        header('Content-Disposition: attachment;filename="userList.xls"');
+        header('Content-Disposition: attachment;filename="fairtex.xls"');
         header('Cache-Control: max-age=0');
         // If you're serving to IE 9, then the following may be needed
         header('Cache-Control: max-age=1');
@@ -306,6 +314,54 @@ class Export extends CI_Controller {
 
         }
  
+    }
+
+    public function exportxlsx()
+    {  
+       /// $this->load->view('wholesale/reportexcel');
+      
+
+        // mockup data by json file ex. you can use retrive data from db.
+        $json = file_get_contents('employee.json');
+        $employees = json_decode($json, true);
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // header
+        $spreadsheet->getActiveSheet()->setCellValue('A1', 'รหัสพนักงาน')
+            ->setCellValue('B1', 'ชื่อ')
+            ->setCellValue('C1', 'นามสกุล')
+            ->setCellValue('D1', 'อีเมล์')
+            ->setCellValue('E1', 'เพศ')
+            ->setCellValue('F1', 'เงินเดือน')
+            ->setCellValue('G1', 'เบอร์โทรศัพท์');
+
+        // cell value
+        $spreadsheet->getActiveSheet()->fromArray($employees, null, 'A2');
+
+        // style
+        $last_row = count($employees) + 1;
+        $spreadsheet->getActiveSheet()->getStyle('F2:F' . $last_row)
+            ->getNumberFormat()
+            ->setFormatCode(NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+
+        $spreadsheet->getActiveSheet()->getStyle('G1:G'.$last_row)->getNumberFormat()
+            ->setFormatCode('0000000000');
+
+        $spreadsheet->getActiveSheet()->getStyle('A1:G1')->getFont()->setBold(true);
+
+        foreach(range('A','G') as $columnID) {
+            $spreadsheet->getActiveSheet()->getColumnDimension($columnID)->setAutoSize(true);
+        }
+
+        $writer = new Xlsx($spreadsheet);
+
+        // save file to server and create link
+        $writer->save('excel/fairtex.xlsx');
+        
+        echo '<a href="excel/fairtex.xlsx">Download Excel</a>'; 
+        
     }
  
 }

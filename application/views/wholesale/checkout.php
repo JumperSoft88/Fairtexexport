@@ -1,3 +1,12 @@
+<?php 
+ require 'vendor/autoload.php'; 
+                    
+ use PhpOffice\PhpSpreadsheet\Spreadsheet;
+ use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
+ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -266,7 +275,64 @@
             <?php if(isset($_SESSION['userType'])){
 
             if($_SESSION['userType'] == 'administrator'){?>
-                <div class="col-3"><button  class="btn btn-success">Export Invoice.</button></div>
+                <div class="col-3"><a href="<?php echo base_url(); ?>export/exportxlsx" class="btn btn-success" style="width :140px;">Export Invoice.</a></div>
+
+                <?php
+                   
+
+                    // mockup data by json file ex. you can use retrive data from db.
+                    $json = file_get_contents('employee.json');
+                    $employees = json_decode($json, true);
+
+                    $spreadsheet = new Spreadsheet();
+                    $sheet = $spreadsheet->getActiveSheet();
+
+                    // header
+                    $spreadsheet->getActiveSheet()->setCellValue('A1', 'รหัสพนักงาน')
+                        ->setCellValue('B1', 'ชื่อ')
+                        ->setCellValue('C1', 'นามสกุล')
+                        ->setCellValue('D1', 'อีเมล์')
+                        ->setCellValue('E1', 'เพศ')
+                        ->setCellValue('F1', 'เงินเดือน')
+                        ->setCellValue('G1', 'เบอร์โทรศัพท์');
+
+                    // cell value
+                    $spreadsheet->getActiveSheet()->fromArray($employees, null, 'A2');
+
+                    // style
+                    $last_row = count($employees) + 1;
+                    $spreadsheet->getActiveSheet()->getStyle('F2:F' . $last_row)
+                        ->getNumberFormat()
+                        ->setFormatCode(NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+
+                    $spreadsheet->getActiveSheet()->getStyle('G1:G'.$last_row)->getNumberFormat()
+                        ->setFormatCode('0000000000');
+
+                    $spreadsheet->getActiveSheet()->getStyle('A1:G1')->getFont()->setBold(true);
+
+                    foreach(range('A','G') as $columnID) {
+                        $spreadsheet->getActiveSheet()->getColumnDimension($columnID)->setAutoSize(true);
+                    }
+
+                    $writer = new Xlsx($spreadsheet);
+
+                    // save file to server and create link
+                    $writer->save('excel/fairtex.xlsx');
+                    
+                    echo '<a href="excel/fairtex.xlsx">Download Excel</a>'; 
+                    
+ 
+                
+                ?>
+
+
+
+
+
+
+
+
+
             <?php }else{?>  
                <div class="col-2"><a href="<?php echo base_url(); ?>export/excel" class="btn btn-success" style="width :120px;">Sent order.</a></div>
 
