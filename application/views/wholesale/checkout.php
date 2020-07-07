@@ -275,7 +275,7 @@
             <?php if(isset($_SESSION['userType'])){
 
             if($_SESSION['userType'] == 'administrator'){?>
-                <div class="col-3"><a href="<?php echo base_url(); ?>export/exportxlsx" class="btn btn-success" style="width :140px;">Export Invoice.</a></div>
+                <div class="col-3"><a href="excel/fairtex.xlsx" class="btn btn-success" style="width :140px;"> Export Invoice.</a></div>
 
                 <?php
                    
@@ -288,47 +288,111 @@
                     $sheet = $spreadsheet->getActiveSheet();
 
                     // header
-                    $spreadsheet->getActiveSheet()->setCellValue('A1', 'รหัสพนักงาน')
-                        ->setCellValue('B1', 'ชื่อ')
-                        ->setCellValue('C1', 'นามสกุล')
-                        ->setCellValue('D1', 'อีเมล์')
-                        ->setCellValue('E1', 'เพศ')
-                        ->setCellValue('F1', 'เงินเดือน')
-                        ->setCellValue('G1', 'เบอร์โทรศัพท์');
+                    // $spreadsheet->getActiveSheet()->setCellValue('A1', 'รหัสพนักงาน')
+                    //     ->setCellValue('B1', 'ชื่อ')
+                    //     ->setCellValue('C1', 'นามสกุล')
+                    //     ->setCellValue('D1', 'อีเมล์')
+                    //     ->setCellValue('E1', 'เพศ')
+                    //     ->setCellValue('F1', 'เงินเดือน')
+                    //     ->setCellValue('G1', 'เบอร์โทรศัพท์');
+                    $spreadsheet->getActiveSheet()->setCellValue('F1', 'FAIRTEX EQUIPMENT CO.,LTD.')
+                        ->setCellValue('F2', '99/5, MOO3, SOI BOONTHAMANUSORN')
+                        ->setCellValue('F3', 'THEPARAK RD.,BANGPLEEYAI, BANGPLEE,')
+                        ->setCellValue('F4', 'SAMUTPRAKARN 10540, THAILAND')
+                        ->setCellValue('F5', 'TEL (662)3855148,3855149   FAX(662)3855403') 
+                        ->setCellValue('A7', 'CONSIGNEE:') 
+                        ->setCellValue('C7', 'SHIP TO : ') 
+                        ->setCellValue('E8', 'Invoice No : ') 
+                        ->setCellValue('E9', 'Date : ') 
+                        ->setCellValue('E12', 'OUR REF  : ') 
+                        ->setCellValue('A15', 'FREIGHT CHARGE : FREIGHT COLLECT') 
+                        ->setCellValue('A17', 'TERM OF SALE : FOB (BANGKOK)	') 
+                        ->setCellValue('C17', 'TO: ') 
+                        ->setCellValue('E17', 'FROM :   BANGKOK, THAILAND	') 
 
-                    // cell value
-                    $spreadsheet->getActiveSheet()->fromArray($employees, null, 'A2');
+                        ->setCellValue('A20', 'SKU#')
+                        ->setCellValue('B20', 'Description')
+                        ->setCellValue('C20', 'Size')
+                        ->setCellValue('D20', 'Color')
+                        ->setCellValue('E20', 'Qty.')
+                        ->setCellValue('F20', 'UNIT PRICE')
+                        ->setCellValue('G20', 'AMOUNT (USD)');
+                        ;
 
-                    // style
-                    $last_row = count($employees) + 1;
-                    $spreadsheet->getActiveSheet()->getStyle('F2:F' . $last_row)
-                        ->getNumberFormat()
-                        ->setFormatCode(NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+                    $spreadsheet->getActiveSheet()->getStyle("F1:F2")->getFont()->setSize(14);
+                    $spreadsheet->getActiveSheet()->getStyle("F3:F4")->getFont()->setSize(14);
+                    $spreadsheet->getActiveSheet()->getStyle("F5:A7")->getFont()->setSize(14);
+                    $spreadsheet->getActiveSheet()->getStyle("C7:E8")->getFont()->setSize(14);
+                    $spreadsheet->getActiveSheet()->getStyle("E9:E12")->getFont()->setSize(14);
+                    $spreadsheet->getActiveSheet()->getStyle("A15:A17")->getFont()->setSize(14);
+                    $spreadsheet->getActiveSheet()->getStyle("C17:E17")->getFont()->setSize(14);
+                    $spreadsheet->getActiveSheet()->getStyle("A20:B20")->getFont()->setSize(14);
+                    $spreadsheet->getActiveSheet()->getStyle("C20:D20")->getFont()->setSize(14);
+                    $spreadsheet->getActiveSheet()->getStyle("E20:F20")->getFont()->setSize(14);
+                    $spreadsheet->getActiveSheet()->getStyle("A7:G20")->getFont()->setSize(14);
 
-                    $spreadsheet->getActiveSheet()->getStyle('G1:G'.$last_row)->getNumberFormat()
-                        ->setFormatCode('0000000000');
+                    $spreadsheet->getActiveSheet()->getStyle('F1')->getFont()->setBold( true );
+                    $spreadsheet->getActiveSheet()->getStyle('F2')->getFont()->setBold( true );
+                    $spreadsheet->getActiveSheet()->getStyle('F3')->getFont()->setBold( true );
+                    $spreadsheet->getActiveSheet()->getStyle('F4')->getFont()->setBold( true );
+                    $spreadsheet->getActiveSheet()->getStyle('F5')->getFont()->setBold( true );
+                    $spreadsheet->getActiveSheet()->getStyle('A7')->getFont()->setBold( true );
+                    $spreadsheet->getActiveSheet()->getStyle('C7')->getFont()->setBold( true );
+                    $spreadsheet->getActiveSheet()->getStyle('E8')->getFont()->setBold( true );
+                    $spreadsheet->getActiveSheet()->getStyle('E9')->getFont()->setBold( true );
+                    $spreadsheet->getActiveSheet()->getStyle('E12')->getFont()->setBold( true );
+                    $spreadsheet->getActiveSheet()->getStyle('A15')->getFont()->setBold( true );
+                    $spreadsheet->getActiveSheet()->getStyle('A17')->getFont()->setBold( true ); 
+                    $spreadsheet->getActiveSheet()->getStyle('C17')->getFont()->setBold( true ); 
+                    $spreadsheet->getActiveSheet()->getStyle('E17')->getFont()->setBold( true ); 
+                    $spreadsheet->getActiveSheet()->getStyle('A20')->getFont()->setBold( true ); 
+                    $spreadsheet->getActiveSheet()->getStyle('B20')->getFont()->setBold( true );
+                    $spreadsheet->getActiveSheet()->getStyle('C20')->getFont()->setBold( true );
+                    $spreadsheet->getActiveSheet()->getStyle('D20')->getFont()->setBold( true );
+                    $spreadsheet->getActiveSheet()->getStyle('E20')->getFont()->setBold( true );
+                    $spreadsheet->getActiveSheet()->getStyle('F20')->getFont()->setBold( true );
+                    $spreadsheet->getActiveSheet()->getStyle('G20')->getFont()->setBold( true );
 
-                    $spreadsheet->getActiveSheet()->getStyle('A1:G1')->getFont()->setBold(true);
 
-                    foreach(range('A','G') as $columnID) {
-                        $spreadsheet->getActiveSheet()->getColumnDimension($columnID)->setAutoSize(true);
+
+
+                    $rowCount = 21;
+                    foreach ($this->cart->contents() as $items){
+                        $spreadsheet->getActiveSheet()->SetCellValue('A'.$rowCount, $items['name']);
+                        $spreadsheet->getActiveSheet()->SetCellValue('B'.$rowCount, $items['name']);
+                        $spreadsheet->getActiveSheet()->SetCellValue('C'.$rowCount, $items['options']['size']);
+                        $spreadsheet->getActiveSheet()->SetCellValue('D'.$rowCount, $items['options']['color']);
+                        $spreadsheet->getActiveSheet()->SetCellValue('E'.$rowCount, $items['qty']);
+                        $spreadsheet->getActiveSheet()->SetCellValue('F'.$rowCount, $items['price']);
+                        $spreadsheet->getActiveSheet()->SetCellValue('G'.$rowCount, $items['subtotal']);
+                        
+                        $rowCount++;
                     }
+                    // cell value
+                    // $spreadsheet->getActiveSheet()->fromArray($employees, null, 'A30');
+
+                    // // style
+                    // $last_row = count($employees) + 1;
+                    // $spreadsheet->getActiveSheet()->getStyle('F2:F' . $last_row)
+                    //     ->getNumberFormat()
+                    //     ->setFormatCode(NumberFormat::FORMAT_NUMBER_COMMA_SEPARATED1);
+
+                    // $spreadsheet->getActiveSheet()->getStyle('G1:G'.$last_row)->getNumberFormat()
+                    //     ->setFormatCode('0000000000');
+
+                    // $spreadsheet->getActiveSheet()->getStyle('A1:G1')->getFont()->setBold(true);
+
+                    // foreach(range('A','G') as $columnID) {
+                    //     $spreadsheet->getActiveSheet()->getColumnDimension($columnID)->setAutoSize(true);
+                    // }
 
                     $writer = new Xlsx($spreadsheet);
 
                     // save file to server and create link
                     $writer->save('excel/fairtex.xlsx');
                     
-                    echo '<a href="excel/fairtex.xlsx">Download Excel</a>'; 
-                    
- 
                 
                 ?>
-
-
-
-
-
 
 
 
