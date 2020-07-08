@@ -43,8 +43,10 @@ class Product_model extends CI_Model
     public function getAllProduct()
     {
         $this->db->select('*');
-        $this->db->from('tbl_product_detail');  
-        $this->db->order_by("product_detail_id", "asc");
+    //    $this->db->from('tbl_product_detail');  
+    //   $this->db->order_by("product_detail_id", "asc");
+        $this->db->from('tbl_product_items');  
+        $this->db->order_by("product_id", "asc");
         $query = $this->db->get();
       //  $result = $query->result(); 
   
@@ -66,9 +68,12 @@ class Product_model extends CI_Model
     public function getProductDetailByID($id)
     {
         $this->db->select('*');
-        $this->db->from('tbl_product_detail');  
-        $this->db->where('product_detail_id', $id);
-        $this->db->order_by("product_detail_id", "asc");
+        // $this->db->from('tbl_product_detail');  
+        // $this->db->where('product_detail_id', $id);
+        // $this->db->order_by("product_detail_id", "asc");
+        $this->db->from('tbl_product_items');  
+        $this->db->where('product_id', $id); 
+        
         $query = $this->db->get();
         $result = $query->result(); 
   
@@ -97,8 +102,10 @@ class Product_model extends CI_Model
 
     public function updateProductDetail($id,$data)
     {
-        $this->db->where('product_detail_id', $id);
-        $this->db->update('tbl_product_detail', $data);
+        // $this->db->where('product_detail_id', $id);
+        // $this->db->update('tbl_product_detail', $data);
+        $this->db->where('product_id', $id);
+        $this->db->update('tbl_product_items', $data);
     }
 
 }

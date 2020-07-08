@@ -290,7 +290,7 @@ class Products extends CI_Controller {
 
     
         $dataJson = array(
-                'product_detail_id' => $product[0]->product_detail_id, 
+                'product_detail_id' => $product[0]->product_id, 
                 //'product_id' => $product[0]->product_id, 
                 'product_name' => $product[0]->product_name, 
                 'product_size' => $product[0]->product_size, 
@@ -313,7 +313,7 @@ class Products extends CI_Controller {
     }
 
     public function updateProductDetailByID(){
-        $product_detail_id = $_POST['product_detail_id'];
+        $product_detail_id = $_POST['product_id'];
         $product_name = $_POST['product_name'];
         $product_desc = $_POST['product_desc'];
         $product_size = $_POST['product_size'];

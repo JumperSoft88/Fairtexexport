@@ -278,7 +278,7 @@
                               <td><?php echo $item->product_wholesale30;?></td> 
                               <td><?php echo $item->product_wholesale35;?></td> 
                               <td width="6%"> 
-                                  <a type="button" class="btn btn-info"  onclick="functionEdit(<?php echo $item->product_detail_id;?>)"><span class="fa fa-pencil-square-o" aria-hidden="true"></a>  
+                                  <a type="button" class="btn btn-info"  onclick="functionEdit(<?php echo $item->product_id;?>)"><span class="fa fa-pencil-square-o" aria-hidden="true"></a>  
                                   <!-- <a type="button" class="btn btn-success"  onclick=""><span class="fa fa-check" ></a>   -->
                               </td>
                           </tr>
