@@ -55,7 +55,7 @@
       <div class="collapse navbar-collapse" id="navbarResponsive">
         <ul class="navbar-nav ml-auto">
           <li class="nav-item mx-0 mx-lg-1">
-            <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="<?php echo base_url(); ?>">Home</a>
+            <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="<?php echo base_url(); ?>login/member">Home</a>
           </li>
           <li class="nav-item mx-0 mx-lg-1">
           <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="<?php echo base_url(); ?>loaddatatable">Product</a>
@@ -259,8 +259,8 @@
         <div class="col-lg-4 mb-5 mb-lg-0">
           <h5 class="text-uppercase mb-4">Fairtex Equipment Co.,Ltd</h5>
           <p class="lead mb-0">99/5 Moo3 Soi Boonthamanusorn, Theparak Road, Bangpleeyai, Bangplee Samutprakarn 10540
-		  	<br>Email: somsiri@fairtexproshop.com
-			<br>Phone: (+662) 385-5149
+		  	<br>Email: fairtexexport@gmail.com
+			<br>Phone: (+662) 385-5149, 02-385-5148 / M (+663) 902-7176
 			<br>Fax: (+662) 385-5403</p>
         </div>
 

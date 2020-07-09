@@ -9,8 +9,10 @@ class GenerateUrl extends CI_Controller {
         $this->load->helper('url'); 
 
         $this->load->library('encryption'); 
-        $this->encryption->initialize(array('driver' => 'mcrypt'));
-        $this->encryption->initialize(array('driver' => 'openssl'));
+
+        //local open
+       // $this->encryption->initialize(array('driver' => 'mcrypt'));
+        //$this->encryption->initialize(array('driver' => 'openssl'));
     }
 
     public function index() {  
