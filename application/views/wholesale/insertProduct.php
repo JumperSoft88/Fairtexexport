@@ -244,8 +244,7 @@
                       <a href="<?php echo base_url(); ?>products/"  class="btn btn-danger"  style="width : 120px">Cancel</a><br><br>
                   </div>   
               </div> <br>   
-          </div>     
-          <table class="table table-striped table-bordered productdatatable" style="width: 100%" id="productdatatable">
+              <table class="table table-striped table-bordered productdatatable" style="width: 100%" id="productdatatable">
                   <thead>
                       <tr class="text-center">
                           <th>Product name</th>
@@ -286,6 +285,8 @@
                       <?php } ?>  
                   </body> 
               </table>  
+          </div>     
+          
       </div>
     </div>
   </div>
