@@ -221,13 +221,14 @@
                         <thead>
                             <tr> 
                                 <!-- <th hidden >Product</th> -->
+                                <!-- <th style="text-align: center; width: 15%;">Image</th> -->
                                 <th style="text-align: center; width: 20%;">Product name</th>
-                                <th style="text-align: center; width: 30%;">Description</th>
+                                <th style="text-align: center; width: 20%;">Description</th>
                                 <th style="text-align: center; width: 10%;">Size</th>
-                                <th style="text-align: center; width: 15%;">Color</th>
+                                <th style="text-align: center; width: 10%;">Color</th>
                                 <th style="text-align: center; width: 10%;">Cost</th>
-                                <th style="text-align: center; width: 20%;">Qty.</th> 
-                                <th style="text-align: center; width: 15%;">Total</th> 
+                                <th style="text-align: center; width: 10%;">Qty.</th> 
+                                <th style="text-align: center; width: 20%;">Total</th> 
                                 <th style="text-align: center; width: 15%;"></th> 
                             </tr>
                         </thead>
@@ -267,8 +268,8 @@
     </div>
 </body>
 
-<div class="modal" id="mdBuyProduct" tabindex="-1" role="dialog">
-    <div class="modal-dialog modal-lg" role="document">
+<div class="modal" id="mdBuyProduct" tabindex="-1" role="dialog" >
+    <div class="modal-dialog modal-xl" role="document">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title">Buy Product</h5>
@@ -284,6 +285,7 @@
                             <thead>
                                 <tr> 
                                     <!-- <th hidden >Product</th> -->
+                                    <th style="text-align: center; width: 20%;">Image</th>
                                     <th style="text-align: center; width: 20%;">Product name</th>
                                     <th style="text-align: center; width: 30%;">Description</th>
                                     <th style="text-align: center; width: 10%;">Size</th>

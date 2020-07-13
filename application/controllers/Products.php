@@ -5,7 +5,7 @@ class Products extends CI_Controller {
     public function __construct() {
         parent:: __construct();
 
-        $this->load->helper('url');
+        $this->load->helper('url', 'form');
         $this->load->model('product_model');
         $this->load->model('member_model');
 
@@ -84,23 +84,39 @@ class Products extends CI_Controller {
     public function insertProduct($val)
     {
         if($val == 'insert'){
-            $data1 = array(
-                'product_name' => $_POST['product_name'], 
-                'product_code' => $_POST['product_name'], 
-                'product_detail' => $_POST['product_name'], 
-                'product_image_path' => 'file/image', 
-                'product_created_date' => 'NOW()',
-                'product_modified_date' => 'NOW()' 
+            // $data1 = array(
+            //     'product_name' => $_POST['product_name'], 
+            //     'product_code' => $_POST['product_name'], 
+            //     'product_detail' => $_POST['product_name'], 
+            //     'product_image_path' => 'file/image', 
+            //     'product_created_date' => 'NOW()',
+            //     'product_modified_date' => 'NOW()' 
                 
-            );
+            // );
 
-            $this->product_model->insertProduct($data1);
+            // $this->product_model->insertProduct($data1);
 
 
-            $productId = $this->product_model->getProductByName($_POST['product_name']);
+            // $productId = $this->product_model->getProductByName($_POST['product_name']);
 
+            $config['upload_path'] = './images/';
+            $config['allowed_types'] = 'gif|jpg|png';
+            $config['max_size'] = 2000;
+            $config['max_width'] = 3000;
+            $config['max_height'] = 3000;
+            $data = "";
+
+            $this->load->library('upload', $config);
+
+            if (!$this->upload->do_upload('profile_image')) {
+                $error = array('error' => $this->upload->display_errors()); 
+            } else {
+                $data = $this->upload->data(); 
+            }
+
+            $filename = $data['file_name'];
             $data2 = array(
-                'product_id '  => $productId[0]->product_id,
+               // 'product_id '  => $productId[0]->product_id,
                 'product_name' => $_POST['product_name'], 
                 'product_size' => strtoupper($_POST['product_size']), 
                 'product_colors' => $_POST['product_colors'], 
@@ -111,13 +127,16 @@ class Products extends CI_Controller {
                 'product_wholesale' => $_POST['product_wholesale'], 
                 'product_wholesale30' => $_POST['product_wholesale30'], 
                 'product_wholesale35' => $_POST['product_wholesale35'], 
-                'product_create_date' => ddate('Y-m-d\TH:i:s')
+                'image_name' => 'images/'.$filename,
+                'product_create_date' => date('Y-m-d\TH:i:s')
             );
 
             $this->product_model->insertProductDetail($data2);
 
+            $allProduct['allProduct'] = $this->product_model->getAllProduct()->result();
+
             $this->session->set_flashdata('msg','Success');
-            $this->load->view('wholesale/product');
+            $this->load->view('wholesale/insertProduct',$allProduct);
         }else{
 
             $allProduct['allProduct'] = $this->product_model->getAllProduct()->result();
@@ -144,7 +163,7 @@ class Products extends CI_Controller {
 
             $this->load->view('wholesale/product');
         }else{
-            $this->load->view('wholesale/insertCustomer');
+            $this->load->view('wholesale/insertCustomer',$allProduct);
         } 
     }
 
@@ -313,36 +332,80 @@ class Products extends CI_Controller {
     }
 
     public function updateProductDetailByID(){
-        $product_detail_id = $_POST['product_id'];
-        $product_name = $_POST['product_name'];
-        $product_desc = $_POST['product_desc'];
-        $product_size = $_POST['product_size'];
-        $product_colors = $_POST['product_colors'];
-        $product_cost = $_POST['product_cost'];
-        $product_usd01 = $_POST['product_usd01'];
-        $product_usd05 = $_POST['product_usd05'];
-        $product_usd08 = $_POST['product_usd08'];
-        $product_wholesale = $_POST['product_wholesale'];
-        $product_wholesale30 = $_POST['product_wholesale30'];
-        $product_wholesale35 = $_POST['product_wholesale35'];
 
-       
-  
-         $data = array( 
-             'product_name' => $product_name,   
-             'product_desc' => $product_desc,   
-             'product_size' => $product_size, 
-             'product_colors' => $product_colors, 
-             'product_cost' => $product_cost, 
-             'product_usd01' => $product_usd01, 
-             'product_usd05' => $product_usd05, 
-             'product_usd08' => $product_usd08, 
-             'product_wholesale' => $product_wholesale, 
-             'product_wholesale30' => $product_wholesale30, 
-             'product_wholesale35' => $product_wholesale35,
-             'product_modifiedDate' => date('Y-m-d\TH:i:s')
-         ); 
+
+        $config['upload_path'] = './images/';
+        $config['allowed_types'] = 'gif|jpg|png';
+        $config['max_size'] = 2000;
+        $config['max_width'] = 3000;
+        $config['max_height'] = 3000;
+        $data = "";
+
+        $this->load->library('upload', $config);
+
+        if (!$this->upload->do_upload('edit_profile_image')) {
+            $error = array('error' => $this->upload->display_errors()); 
+        } else {
+            $data = $this->upload->data(); 
+        } 
+
+        $product_id = $_POST['edit_product_id'];
+        $product_name = $_POST['edit_product_name'];
+        $product_desc = $_POST['edit_product_desc'];
+        $product_size = $_POST['edit_product_size'];
+        $product_colors = $_POST['edit_product_colors'];
+        $product_cost = $_POST['edit_product_cost'];
+        $product_usd01 = $_POST['edit_product_usd01'];
+        $product_usd05 = $_POST['edit_product_usd05'];
+        $product_usd08 = $_POST['edit_product_usd08'];
+        $product_wholesale = $_POST['edit_product_wholesale'];
+        $product_wholesale30 = $_POST['edit_product_wholesale30'];
+        $product_wholesale35 = $_POST['edit_product_wholesale35'];
+
+      
+
+         if( $data != null){ 
+
+            $filename = $data['file_name'];
+            $data = array( 
+                'product_name' => $product_name,   
+                'product_desc' => $product_desc,   
+                'product_size' => $product_size, 
+                'product_colors' => $product_colors, 
+                'product_cost' => $product_cost, 
+                'product_usd01' => $product_usd01, 
+                'product_usd05' => $product_usd05, 
+                'product_usd08' => $product_usd08, 
+                'product_wholesale' => $product_wholesale, 
+                'product_wholesale30' => $product_wholesale30, 
+                'product_wholesale35' => $product_wholesale35,
+                'image_name' => 'images/'.$filename,
+                'product_modifiedDate' => date('Y-m-d\TH:i:s')
+            ); 
+
+            $this->product_model->updateProductDetail($product_id , $data); 
+        }else{
+            $data = array( 
+                'product_name' => $product_name,   
+                'product_desc' => $product_desc,   
+                'product_size' => $product_size, 
+                'product_colors' => $product_colors, 
+                'product_cost' => $product_cost, 
+                'product_usd01' => $product_usd01, 
+                'product_usd05' => $product_usd05, 
+                'product_usd08' => $product_usd08, 
+                'product_wholesale' => $product_wholesale, 
+                'product_wholesale30' => $product_wholesale30, 
+                'product_wholesale35' => $product_wholesale35, 
+                'product_modifiedDate' => date('Y-m-d\TH:i:s')
+            ); 
+
+            $this->product_model->updateProductDetail($product_id , $data); 
+        }
+        
+        $allProduct['allProduct'] = $this->product_model->getAllProduct()->result();
+
  
-         $this->product_model->updateProductDetail($product_detail_id , $data); 
+        $this->load->view('wholesale/insertProduct',$allProduct);
      }
 }

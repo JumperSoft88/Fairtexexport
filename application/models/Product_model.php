@@ -37,7 +37,8 @@ class Product_model extends CI_Model
 
     public function insertProductDetail($data)
     {
-        $this->db->insert('tbl_product_detail', $data);
+        //$this->db->insert('tbl_product_detail', $data);
+        $this->db->insert('tbl_product_items', $data);
     }
 
     public function getAllProduct()

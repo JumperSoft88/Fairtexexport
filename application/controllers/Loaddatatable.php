@@ -271,6 +271,19 @@ class Loaddatatable extends CI_Controller {
                 $typeCose = '0';
             }
              
+            $images = $r->image_name;
+            $pathImage = "";
+
+            if( $images != null ){
+                
+                $pathImage = '<img src="'.base_url().$images.'" class="w3-border" style="width:100px;height:100px;">';
+            
+            }else{ 
+                $pathImage = '<img src="'.base_url().'images/emtry.jpg" class="w3-border" style="width:100px;height:100px;">';
+            }
+           
+           
+           
             $product_name = $r->product_name;
             $product_desc = $r->product_desc;
             $product_size = $r->product_size;
@@ -289,24 +302,26 @@ class Loaddatatable extends CI_Controller {
                 if($_SESSION['userType'] == 'administrator'){ 
                     $data[] = array(  
                         // $no++,
+                        $pathImage,
                         $product_name,
                         $product_desc,
                         $product_size, 
                         $color ,
                         $typeCose.'$', 
-                        '<input type="number" class="form-control" id="qty'.$index.'" name="qty">', 
+                        '<input type="number" class="form-control" style="width:100px;" id="qty'.$index.'" name="qty">', 
                         '<a onclick="addData('.$index.','.$product_id.','."'$product_name'".','."'$product_size'".','."'$color'".','.$typeCose.','."'$product_desc'".')" class="btn btn-primary mr-1" style="text-align:center;color:white;background-color:orange;"> <i class="fa fa-shopping-cart" aria-hidden="true"></i></a>',
                         
                     );
                 }else{
                     $data[] = array(  
                         // $no++,
+                        $pathImage,
                         $product_name,
                         $product_desc,
                         $product_size, 
                         $color,
                         $typeCose.'$', 
-                        '<input type="number" class="form-control" style="text-align: center; width: 20%;" id="qty'.$index.'" name="qty">', 
+                        '<input type="number" class="form-control" style="text-align: center; width: 100px;" id="qty'.$index.'" name="qty">', 
                         '<a onclick="addData('.$index.','.$product_id.','."'$product_name'".','."'$product_size'".','."'$color'".','.$typeCose.','."'$product_desc'".')" class="btn btn-primary mr-1" style="text-align: center;color:white;background-color:orange;"> <i class="fa fa-shopping-cart" aria-hidden="true"></i></a>',
                         
                     );
