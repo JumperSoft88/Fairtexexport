@@ -207,17 +207,26 @@
           <div class="row"> 
             <div class="col-8"></div>  
             <div class="col-2"><h6>Discount</h6></div>
-            <div class="col-2" style="text-align: right;"><input type="number" style="text-align: right;font-weight: bold;" size="150" class="form-control" id="discount" name="discount" onchange="totalFunction()" ></input></div>
+            <div class="col-2" style="text-align: right;"><input type="number" style="text-align: right;font-weight: bold;" size="150" class="form-control" id="discount" name="discount" onchange="totalFunction()" value=""></input></div>
           </div>
-          <div class="row"> 
-            <div class="col-8"></div>  
-            <div class="col-2"><h6><input type="text" style="text-align: right;font-weight: bold;" size="150" class="form-control" id="discount" name="discount"></h6></div>
-            <div class="col-2" style="text-align: right;"><input type="number" style="text-align: right;font-weight: bold;" size="150" class="form-control" id="discount" name="discount" onchange="totalFunction()"></input></div>
+          <div class="row" style="margin-top: 6px;"> 
+            <div class="col-8"></div> 
+            <div class="col-2">
+              <div class="row"> 
+                <div class="col-6" style="text-align: right;" ><h6>Vat %</h6></div> <input type="hidden" style=" text-align: right;font-weight: bold;" size="150" class="form-control" id="summaryHide" name="summaryHide" value="<?=  number_format($this->cart->total()) ?>">
+                <div class="col-6" style="text-align: right;"><input type="number" style="text-align: right;font-weight: bold;" size="50" class="form-control" id="vat" name="vat" onchange="totalFunction()"> </div> 
+              </div>
+            </div>
+         
+            <div class="col-2">  <input id="input" type="text" style="text-align: right;font-weight: bold;"  class="form-control" value="" disabled/>  </div>
+            <!-- <div class="col-8"></div>  
+            <div class="col-2"><h6> <input type="text" style="text-align: right;font-weight: bold;" size="50" class="form-control" id="namePrice1" name="namePrice1"></h6></div>
+            <div class="col-2" style="text-align: right;"><input type="number" style="text-align: right;font-weight: bold;" size="150" class="form-control" id="addPrice1" name="addPrice1" onchange="totalFunction()"></input></div> -->
           </div>
-          <div class="row"> 
+          <div class="row" style="margin-top: 6px;"> 
             <div class="col-8"></div>  
-            <div class="col-2"><h6><input type="text" style="text-align: right;font-weight: bold;" size="150" class="form-control" id="discount" name="discount"></h6></div>
-            <div class="col-2" style="text-align: right;"><input type="number" style="text-align: right;font-weight: bold;" size="150" class="form-control" id="discount" name="discount" onchange="totalFunction()"></div>
+            <div class="col-2"><h6><input type="text" style="text-align: right;font-weight: bold;" size="150" class="form-control" id="namePrice2" name="namePrice2"></h6></div>
+            <div class="col-2" style="text-align: right;"><input type="number" style="text-align: right;font-weight: bold;" size="150" class="form-control" id="addPrice2" name="addPrice2" onchange="totalFunction()"></div>
           </div>
           <div class="row"> 
             <div class="col-8"></div>  
@@ -227,9 +236,10 @@
           <br>
           <div class="row"> 
             <div class="col-8"></div>  
-            <div class="col-2"><h4>Total</h4></div>
+            <div class="col-2"><h4>Total</h4></div> 
             <div class="col-2" style="text-align: right;"><h4 id="summary"><?=  number_format($this->cart->total()).'$' ?></h4></div>
           </div> 
+          <input id="sum" type="text" style="text-align: right;font-weight: bold;"  class="form-control" value="<?=  number_format($this->cart->total()) ?>" disabled/> 
         <?php }else{ ?>
           <div class="row"> 
             <div class="col-8"></div>  
@@ -252,8 +262,8 @@
           <br>
           <div class="row"> 
             <div class="col-8"></div>  
-            <div class="col-2"><h4>Total</h4></div>
-            <div class="col-2" style="text-align: right;"><h4 id="summary"><?=  number_format($this->cart->total()-$_SESSION['discount']-$_SESSION['shippingCost'], 2, '.', '').'$' ?></h4></div>
+            <div class="col-2"><h4>Total</h4></div>    
+            <div class="col-2" style="text-align: right;"><h4 id="summary"><?=  number_format(($this->cart->total()-$_SESSION['discount'])+$_SESSION['shippingCost'], 2, '.', '').'$' ?></h4></div>
           </div> 
 
         <?php
@@ -295,7 +305,7 @@
                     $customerName = $_SESSION['customerName'];
                     $customerAddress = $_SESSION['customerAddress'];
 
-                    $Total = number_format($this->cart->total()-$_SESSION['discount']-$_SESSION['shippingCost'], 2, '.', '');
+                    $Total = number_format(($this->cart->total()-$_SESSION['discount'])+$_SESSION['shippingCost'], 2, '.', '');
                     $shippingCost = number_format($_SESSION['shippingCost']);
                     $discount = number_format($_SESSION['discount']);
                     $subTotal = number_format($this->cart->total(), 2, '.', '');
@@ -536,6 +546,8 @@
     
  
   <section>
+
+
   
   <div class="container page-section portfolio"> 
     <!-- <div class="row"> -->  
@@ -649,22 +661,53 @@
       var total = document.getElementById("total").value;
       var discount = document.getElementById("discount").value;
       var shipping = document.getElementById("shipping").value;
-      var summary;
  
-      if(discount != "" && shipping != ""){
-          summary = total-discount-shipping;
-       }else{
-          if(discount != ""){
-            summary = total-discount;
-          }
-          if(shipping != ""){
-            summary = total-shipping;
-          }
-       } 
+      var summary = document.getElementById("sum").value.replace(",", "");
 
-      var headingDiv = document.getElementById("summary");
-          headingDiv.innerHTML = summary+'$' ;
+      var vat =  document.getElementById("vat").value;
+      var perc = 0;
+ 
+      if(discount == ""){
+        discount = 0;
+      }
 
+      if(shipping == ""){
+        shipping = 0;
+      }
+
+      var sumInvoice = (parseInt(summary)-parseInt(discount))+parseInt(shipping);
+        
+        
+      if(vat == ""){
+          vat = 0;
+      }else{
+          perc =  (vat/100) * sumInvoice;
+      }
+
+      alert("shipping : "+parseInt(shipping));
+      alert("discount : "+parseInt(discount));
+      alert("summary : "+parseInt(summary));
+  
+ 
+      // if(discount != "" && shipping != ""){
+      //     summary = (summary-discount)+parseInt(shipping);
+      //  }else{
+      //     if(discount != ""){
+      //       summary = summary-discount;
+      //     }
+ 
+      //     if(shipping != ""){
+      //       summary = parseInt(summary)+parseInt(shipping);
+      //     }
+      //  } 
+
+   
+
+      var headingDiv = document.getElementById("summary"); 
+          headingDiv.innerHTML =  new Intl.NumberFormat().format(sumInvoice)+'$' ;
+
+          $('#sum').val(sumInvoice); 
+          $('#input').val(new Intl.NumberFormat().format(parseInt(perc))+'$'); 
      // alert('total : '+total);
     }
 
@@ -682,6 +725,30 @@
            }
         }); 
  
+    }
+
+    function calculate() {
+        var vat =  document.getElementById("vat").value;
+        var summary =  document.getElementById("sum").value.replace(",", "");
+ 
+        var perc =  (vat/100) * summary;
+        
+        var headingDiv = document.getElementById("summary"); 
+          headingDiv.innerHTML =  new Intl.NumberFormat().format(parseInt(summary)+parseInt(perc))+'$' ;
+
+        // var sumHide = document.getElementById("summaryHide"); 
+        // sumHide.innerHTML =  parseInt(summary)+parseInt(perc);
+ 
+        $('#input').val(new Intl.NumberFormat().format(parseInt(perc))+'$'); 
+        $('#sum').val(parseInt(summary)+parseInt(perc)); 
+
+       // $('#vatCal').val("GeeksForGeeks"); 
+        
+       // alert(document.getElementById("vat"));
+        // var vatValDiv = document.getElementById("vatCal"); 
+        // vatValDiv.innerHTML = "test";
+
+       
     }
 
     // (".downloadLink").click(
