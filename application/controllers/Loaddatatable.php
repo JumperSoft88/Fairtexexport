@@ -19,11 +19,17 @@ class Loaddatatable extends CI_Controller {
 
     public function index() { 
 
+        echo '>> '.$_SESSION['costType'];
+        echo '-> '.$_SESSION['customerName'];
+
+        
         if(isset($_SESSION['costType'])){ 
             $type = $_SESSION['costType'];  
         }else{ 
             $type = $this->input->post('costType'); 
         } 
+
+        $customerName = "";
 
         if(isset($_SESSION['customerName'])){
             $customerName = $_SESSION['customerName'];  
@@ -37,7 +43,8 @@ class Loaddatatable extends CI_Controller {
         $this->session->set_flashdata('msg','Success');
 
         $dataCust =  array(
-            'customerType' => $type 
+            'customerType' => $type,
+            'customerName' => $customerName
         );
         
         // $this->load->view('wholesale/productDatatable', $dataCust);   
@@ -296,7 +303,12 @@ class Loaddatatable extends CI_Controller {
             // foreach($colors as $c){ 
             //     $colorOption .= "<option> $c</option>";  
             // } 
-
+            $currencyCode = "";
+            if($_SESSION['currencyType'] == 'USD'){
+                $currencyCode = ' $';
+            }else{
+                $currencyCode = ' ฿';
+            } 
 
             if(isset($_SESSION['userType'])){
                 if($_SESSION['userType'] == 'administrator'){ 
@@ -307,8 +319,8 @@ class Loaddatatable extends CI_Controller {
                         $product_desc,
                         $product_size, 
                         $color ,
-                        $typeCose.'$', 
-                        '<input type="number" class="form-control" style="width:100px;" id="qty'.$index.'" name="qty">', 
+                        number_format($typeCose). $currencyCode, 
+                        '<input type="number" min="0" class="form-control" style="width:100px;" id="qty'.$index.'" name="qty">', 
                         '<a onclick="addData('.$index.','.$product_id.','."'$product_name'".','."'$product_size'".','."'$color'".','.$typeCose.','."'$product_desc'".')" class="btn btn-primary mr-1" style="text-align:center;color:white;background-color:orange;"> <i class="fa fa-shopping-cart" aria-hidden="true"></i></a>',
                         
                     );
@@ -320,8 +332,8 @@ class Loaddatatable extends CI_Controller {
                         $product_desc,
                         $product_size, 
                         $color,
-                        $typeCose.'$', 
-                        '<input type="number" class="form-control" style="text-align: center; width: 100px;" id="qty'.$index.'" name="qty">', 
+                        number_format($typeCose).$currencyCode, 
+                        '<input type="number" min="0" class="form-control" style="text-align: center; width: 100px;" id="qty'.$index.'" name="qty">', 
                         '<a onclick="addData('.$index.','.$product_id.','."'$product_name'".','."'$product_size'".','."'$color'".','.$typeCose.','."'$product_desc'".')" class="btn btn-primary mr-1" style="text-align: center;color:white;background-color:orange;"> <i class="fa fa-shopping-cart" aria-hidden="true"></i></a>',
                         
                     );
@@ -511,7 +523,7 @@ class Loaddatatable extends CI_Controller {
     public function sellCustomer()
     { 
         unset(
-            $_SESSION['costType'],
+        //    $_SESSION['costType'],
             $_SESSION['userType'],
             $_SESSION['customerName'],
             $_SESSION['customerTel'],
@@ -519,7 +531,8 @@ class Loaddatatable extends CI_Controller {
             $_SESSION['discount'] ,
             $_SESSION['shippingCost'],
             $_SESSION['customerType'],
-            $_SESSION['email']
+            $_SESSION['email'],
+            $_SESSION['currencyType']
 
         ); 
 
@@ -543,6 +556,14 @@ class Loaddatatable extends CI_Controller {
         $discount = $customer[0]->discount;
         $shippingCost = $customer[0]->shippingCost;
 
+        $currencyType = "";
+
+        if($customerType == "usd-01" || $customerType == "usd-05" || $customerType == "usd-08" ){
+            $currencyType = "USD";
+        }else{
+            $currencyType = "THB";
+        }
+
         $dataSession = array(
             'costType'  => $customerType,
             'userType'     => 'administrator',
@@ -552,7 +573,8 @@ class Loaddatatable extends CI_Controller {
             'discount' => $discount,
             'shippingCost' =>$shippingCost,
             'customerType' => $customerType,
-            'email' =>  $customerEmail
+            'email' =>  $customerEmail,
+            'currencyType' =>  $currencyType
         );
 
         $this->session->set_userdata($dataSession);
@@ -565,4 +587,135 @@ class Loaddatatable extends CI_Controller {
 
        $this->load->view('wholesale/buyProduct',$dataCust);
     }
+
+
+    public function setreport()
+    {
+        $invoiceNo =  $this->input->post('invoiceNo');  
+        $discount =  $this->input->post('discount');  
+        $shippingCost = $this->input->post('shipping'); 
+        $vat = $this->input->post('vat');
+        $price2 = $this->input->post('price2');
+        $price2_detail = $this->input->post('namePrice2');
+        $vat_count  = $this->input->post('invoice_vat_count');
+        $total  = $this->input->post('total');
+        $sub_total  = $this->input->post('sub_total');
+        $invoice_consignee  = $this->input->post('invoice_consignee');
+        $invoice_ship_to  = $this->input->post('invoice_ship_to');
+        $costType  = $this->input->post('costType');
+ 
+        $data = array(
+            'invoice_no' => $invoiceNo, 
+            'invoice_discount' =>  $discount , 
+            'invoice_shipping_cost' => $shippingCost, 
+            'vat' => $vat, 
+            'invoice_vat_count' => $vat_count, 
+            'invoice_price2' => $price2,
+            'invoice_price2_detail' => $price2_detail,
+            'total' => $total,
+            'sub_total' => $sub_total,
+            'invoice_consignee' => $invoice_consignee,
+            'invoice_ship_to' => $invoice_ship_to,
+            'costType' => $costType
+        ); 
+
+       // echo '>>>>[ '. $invoiceNo; 
+        $invoiceTemp = $this->product_model->getInvoiceTemp($invoiceNo); 
+
+      // echo '>>>> '. $invoiceTemp[0];
+
+        if($invoiceTemp[0]->invoice_no != ""){ 
+            $this->product_model->updateInvoiceTemp($invoiceNo,$data); 
+        }else{
+            $this->product_model->insertInvoiceTemp($data); 
+            // $this->product_model->updateInvoiceTemp($invoiceNo,$data); 
+        } 
+
+
+        $result = array(
+            "invoice_discount" => $discount,
+            "invoice_shipping_cost" => $shippingCost 
+        );
+
+
+        echo json_encode($result);
+        exit();
+        $this->session->set_flashdata('msg','Success'); 
+        $this->load->view('wholesale/checkout');
+    }
+
+    function addProductSpecial(){
+         
+        $name = $this->input->post('psname');
+        $size = $this->input->post('pssize');
+        $color = $this->input->post('pscolor');
+        $cost =  $this->input->post('pscost');
+        //$costSprit = explode("$", $cost);
+        $qty = $this->input->post('psqty'); 
+        $desc = $this->input->post('psdesc'); 
+
+        //console.log($id);
+  
+        $product = array(
+            'id' => uniqid(),
+            'name'    => $name, 
+            'qty'     => $qty,
+            'price'   => $cost,
+            'options' => array('size' => $size, 'color' => $color, 'desc' => $desc)
+            
+        );
+     
+        $this->cart->insert($product); 
+    }
+
+    function retriveBuyInvoice($id){
+       // $id = $this->input->post('id');
+
+       unset(
+            $_SESSION['oldInvoiceNo']
+       );
+
+      $this->cart->destroy();
+ 
+      $invoice = $this->product_model->getInvoiceById($id);
+
+      echo '>> '.$invoice[0]->invoice_no;
+
+      $invoiceDetail = $this->product_model->getInvoiceDetailByInvoid($invoice[0]->invoice_no);
+
+      foreach($invoiceDetail as $row){ 
+
+        $product = array(
+            'id' => uniqid(),
+            'name'    => $row->product_name, 
+            'qty'     => $row->product_qty,
+            'price'   => $row->product_unit_price	,
+            'options' => array('size' => $row->product_size, 'color' => $row->product_color, 'desc' => $row->product_description)
+            
+        );
+     
+        $this->cart->insert($product); 
+
+      }
+
+      
+      $dataSession = array(
+        'customerName'  => $invoice[0]->invoice_consignee,
+        'customerAddress'  => $invoice[0]->invoice_ship_to,
+        'costType' => $invoice[0]->typeCose,
+        'currencyType' => $invoice[0]->invoice_currency_code,
+        'oldInvoiceNo' => $invoice[0]->invoice_no
+    );
+
+        $this->session->set_userdata($dataSession);
+
+        
+        $dataCust =  array(
+            'customerType' => $invoice[0]->typeCose
+        );
+
+        $this->load->view('wholesale/buyProduct',$dataCust);
+
+    }
 }
+

@@ -12,13 +12,13 @@ class DraftInvoices extends CI_Controller {
     public function index() {  
          
         $draftInvoices = $this->draftInvoices_model->getAllInvoiceDraft();
-        $sumTotal = $this->draftInvoices_model->getDraftSumTotal();
-        $sumSubTotal = $this->draftInvoices_model->getDraftSumSubTotal();
+        $sumTotalUSD = $this->draftInvoices_model->getDraftSumTotalUSD();
+        $sumTotalTHB = $this->draftInvoices_model->getDraftSumTotalTHB();
         
         $newSession = array(
             'draftInvoices' => $draftInvoices,
-            'draftSumSubTotal' => $sumTotal[0]->sum,
-            'draftSumTotal' => $sumSubTotal[0]->subSum 
+            'draftSumTotalUSD' => $sumTotalUSD[0]->sumUSD,
+            'draftSumTotalTHB' => $sumTotalTHB[0]->sumTHB 
         );
     
         $this->session->set_userdata($newSession);

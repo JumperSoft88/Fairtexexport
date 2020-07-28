@@ -67,12 +67,12 @@
           <li class="nav-item mx-0 mx-lg-1">
           <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="<?php echo base_url(); ?>loaddatatable">Product</a>
           </li>
-          <li class="nav-item mx-0 mx-lg-1">
+          <!-- <li class="nav-item mx-0 mx-lg-1">
             <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#about">About</a>
           </li>
           <li class="nav-item mx-0 mx-lg-1">
             <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#contact">Contact</a>
-          </li>
+          </li> -->
 		      <li class="nav-item mx-0 mx-lg-1">
 
           <?php  if (isset($_SESSION['member_username'])){ ?>
@@ -111,11 +111,12 @@
     </div>
     <br><br>
     <!-- <!?php echo $_SESSION['customerName'];  ?> action="<?php echo base_url(); ?>report" method="POST" -->
+ 
     <form class="login100-form validate-form" action="#" method="POST">
     <div class="container">
         <div class="row"> 
             <div class="col-4"> 
-                <h6>CONSIGNEE:</h6><textarea class="form-control" rows="4" id="consigee" name="consigee" ><?php if(isset($_SESSION['customerName'])){ echo $_SESSION['customerName']; } ?></textarea> 
+                <h6>CONSIGNEE:   </h6><textarea class="form-control" rows="4" id="consigee" name="consigee" ><?php if(isset($_SESSION['customerName'])){ echo $_SESSION['customerName'];} ?></textarea> 
             </div>  
             <div class="col-4"> 
                 <h6>SHIP TO : </h6><textarea class="form-control" rows="4" id="shipTo" name="shipTo"><?php if(isset($_SESSION['customerAddress'])){ echo $_SESSION['customerAddress']; } ?></textarea> 
@@ -123,6 +124,8 @@
             <div class="col-4"> 
               <h6>INVOICE NO. : </h6><input class="form-control"  id="invoiceNo" name="invoiceNo" value="<?php echo $invoceNo?>">
               <h6>DATE : </h6><input class="form-control"  id="dateInvoice" name="dateInvoice" value="<?php echo $fullDate?>">
+              <input type="hidden" class="form-control"  id="costType" name="costType" value="<?php echo $costType;?>">
+              
             </div>
         </div>
         <br>
@@ -165,7 +168,7 @@
                 <th scope="col" style="text-align: center;" width="10%">Color</th> 
                 <th scope="col" style="text-align: center;" width="10%">Qty.</th> 
                 <th scope="col" style="text-align: center;" width="15%">UNIT PRICE</th>
-                <th scope="col" style="text-align: center;" width="20%">AMOUNT (USD)</th>
+                <th scope="col" style="text-align: center;" width="20%">AMOUNT ( <?php echo $_SESSION['currencyType']; ?>)</th>
                 <!-- <th scope="col" style="text-align: center;" width="5%"></th> -->
               </tr>
             </thead>
@@ -180,8 +183,8 @@
                 <td style="text-align: center;"><?= $items['options']['color'] ?></td>
                 <!-- <td style="text-align: center;" class='edit' value="<?= $items['rowid'] ?>" >  <input  style="border-style: none;"  type="text" name="quantity" id="<?= $items['rowid'] ?>" class="text-center" value="<?= $items['qty'] ?>" /> </td> -->
                 <td style="text-align: center;"><?= $items['qty'] ?></td>
-                <td style="text-align: center;"><?= $items['price'].'$' ?></td>
-                <td style="text-align: center;"><?= $items['subtotal'].'$' ?></td>
+                <td style="text-align: center;"><?= $items['price']; if($_SESSION['currencyType'] == 'USD'){ echo ' $';}else{ echo ' ฿';}  ?></td>
+                <td style="text-align: center;"><?= number_format($items['subtotal']); if($_SESSION['currencyType'] == 'USD'){ echo ' $';}else{ echo ' ฿';}  ?></td>
                 <!-- <td style="text-align: center;"><span class="table-remove"><button type="button" onclick="delCart('<?= $items['rowid'] ?>')"
                   class="btn btn-danger btn-rounded btn-sm my-0">Remove</button></span></td>   -->
               </tr>
@@ -202,19 +205,19 @@
             <div class="col-8"></div>  
             <div class="col-2"><h6>Sub Total</h6></div>
             <input type="number" style="text-align: right;display:none;" class="form-control" id="total" name="total" value="<?php echo $this->cart->total() ?>">
-            <div class="col-2" style="text-align: right;"> <h4><?=  number_format($this->cart->total()).'$' ?></h4> </div>
+            <div class="col-2" style="text-align: right;"> <h4><?=  number_format($this->cart->total()); if($_SESSION['currencyType'] == 'USD'){ echo ' $';}else{ echo ' ฿';}  ?></h4> </div>
           </div>
           <div class="row"> 
             <div class="col-8"></div>  
             <div class="col-2"><h6>Discount</h6></div>
-            <div class="col-2" style="text-align: right;"><input type="number" style="text-align: right;font-weight: bold;" size="150" class="form-control" id="discount" name="discount" onchange="totalFunction()" value=""></input></div>
+            <div class="col-2" style="text-align: right;"><input type="number"  min="0" style="text-align: right;font-weight: bold;" size="150" class="form-control" id="discount" name="discount" onchange="totalFunction()" value=""></input></div>
           </div>
           <div class="row" style="margin-top: 6px;"> 
             <div class="col-8"></div> 
             <div class="col-2">
               <div class="row"> 
-                <div class="col-6" style="text-align: right;" ><h6>Vat %</h6></div> <input type="hidden" style=" text-align: right;font-weight: bold;" size="150" class="form-control" id="summaryHide" name="summaryHide" value="<?=  number_format($this->cart->total()) ?>">
-                <div class="col-6" style="text-align: right;"><input type="number" style="text-align: right;font-weight: bold;" size="50" class="form-control" id="vat" name="vat" onchange="totalFunction()"> </div> 
+                <div class="col-6" style="text-align: right;" ><h6>Vat %</h6></div> <input type="hidden"  min="0" style=" text-align: right;font-weight: bold;" size="150" class="form-control" id="summaryHide" name="summaryHide" value="<?=  number_format($this->cart->total()) ?>">
+                <div class="col-6" style="text-align: right;"><input type="number"  min="0" style="text-align: right;font-weight: bold;" size="50" class="form-control" id="vat" name="vat" onchange="totalFunction()"> </div> 
               </div>
             </div>
          
@@ -225,45 +228,44 @@
           </div>
           <div class="row" style="margin-top: 6px;"> 
             <div class="col-8"></div>  
-            <div class="col-2"><h6><input type="text" style="text-align: right;font-weight: bold;" size="150" class="form-control" id="namePrice2" name="namePrice2"></h6></div>
-            <div class="col-2" style="text-align: right;"><input type="number" style="text-align: right;font-weight: bold;" size="150" class="form-control" id="addPrice2" name="addPrice2" onchange="totalFunction()"></div>
+            <div class="col-2"><h6><input type="text"  style="text-align: right;font-weight: bold;" size="150" class="form-control" id="namePrice2" name="namePrice2"></h6></div>
+            <div class="col-2" style="text-align: right;"><input type="number"  min="0" style="text-align: right;font-weight: bold;" size="150" class="form-control" id="addPrice2" name="addPrice2" onchange="totalFunction()"></div>
           </div>
           <div class="row"> 
             <div class="col-8"></div>  
             <div class="col-2"><h6>shipping cost</h6></div>
-            <div class="col-2" style="text-align: right;"><input type="number" style="text-align: right;font-weight: bold;" size="150" class="form-control" id="shipping" name="shipping" onchange="totalFunction()"></div>
+            <div class="col-2" style="text-align: right;"><input type="number"  min="0" style="text-align: right;font-weight: bold;" size="150" class="form-control" id="shipping" name="shipping" onchange="totalFunction()"></div>
           </div>
           <br>
           <div class="row"> 
             <div class="col-8"></div>  
             <div class="col-2"><h4>Total</h4></div> 
-            <div class="col-2" style="text-align: right;"><h4 id="summary"><?=  number_format($this->cart->total()).'$' ?></h4></div>
-          </div> 
-          <input id="sum" type="text" style="text-align: right;font-weight: bold;"  class="form-control" value="<?=  number_format($this->cart->total()) ?>" disabled/> 
+            <div class="col-2" style="text-align: right;"><h4 id="summary"><?=  number_format($this->cart->total()); if($_SESSION['currencyType'] == 'USD'){ echo ' $';}else{ echo ' ฿';}  ?></h4></div>
+          </div>  
         <?php }else{ ?>
           <div class="row"> 
             <div class="col-8"></div>  
             <div class="col-2"><h6>Sub Total</h6></div>
             <input type="number" style="text-align: right;display:none;" class="form-control" id="total" name="total" value="<?php echo $this->cart->total() ?>">
-            <div class="col-2" style="text-align: right;"> <h4><?=  number_format($this->cart->total(), 2, '.', '').'$' ?></h4> </div>
+            <div class="col-2" style="text-align: right;"> <h4><?=  number_format($this->cart->total(), 2, '.', ''); if($_SESSION['currencyType'] == 'USD'){ echo ' $';}else{ echo ' ฿';}  ?></h4> </div>
           </div>
           <div class="row"> 
             <div class="col-8"></div>  
             <div class="col-2"><h6>Discount</h6></div>
             <input type="number" style="text-align: right;display:none;" class="form-control" id="total" name="total" value="">
-            <div class="col-2" style="text-align: right;"> <h4><?php if(isset($_SESSION['discount'])){ echo number_format($_SESSION['discount']).'$'; } ?> </h4> </div>
+            <div class="col-2" style="text-align: right;"> <h4><?php if(isset($_SESSION['discount'])){ echo number_format($_SESSION['discount']); if($_SESSION['currencyType'] == 'USD'){ echo ' $';}else{ echo ' ฿';}  } ?> </h4> </div>
           </div> 
           <div class="row"> 
             <div class="col-8"></div>  
             <div class="col-2"><h6>shipping cost</h6></div>
             <input type="number" style="text-align: right;display:none;" class="form-control" id="total" name="total" value="">
-            <div class="col-2" style="text-align: right;"> <h4><?php if(isset($_SESSION['shippingCost'])){ echo number_format($_SESSION['shippingCost']).'$'; } ?></h4> </div>
+            <div class="col-2" style="text-align: right;"> <h4><?php if(isset($_SESSION['shippingCost'])){ echo number_format($_SESSION['shippingCost']); if($_SESSION['currencyType'] == 'USD'){ echo ' $';}else{ echo ' ฿';} } ?></h4> </div>
           </div>
           <br>
           <div class="row"> 
             <div class="col-8"></div>  
             <div class="col-2"><h4>Total</h4></div>    
-            <div class="col-2" style="text-align: right;"><h4 id="summary"><?=  number_format(($this->cart->total()-$_SESSION['discount'])+$_SESSION['shippingCost'], 2, '.', '').'$' ?></h4></div>
+            <div class="col-2" style="text-align: right;"><h4 id="summary"><?=  number_format(($this->cart->total()-$_SESSION['discount'])+$_SESSION['shippingCost'], 2, '.', ''); if($_SESSION['currencyType'] == 'USD'){ echo ' $';}else{ echo ' ฿';}  ?></h4></div>
           </div> 
 
         <?php
@@ -286,10 +288,10 @@
             <?php if(isset($_SESSION['userType'])){
 
             if($_SESSION['userType'] == 'administrator'){?>
+            <div id="divTotal">
                 <div class="col-3"><a href="excel/fairtex-invoice.xlsx" class="btn btn-success" style="width :140px;"> Export Invoice.</a></div>
-
+            </div>
                 <?php
-                   
 
                     // mockup data by json file ex. you can use retrive data from db.
                     $json = file_get_contents('employee.json');
@@ -304,12 +306,36 @@
                     //$newTel = $_SESSION['newTel'];
                     $customerName = $_SESSION['customerName'];
                     $customerAddress = $_SESSION['customerAddress'];
+                    
+                    $total = 0;
+                    $subTotal = 0;
+                    $vat = 0;
+                    $vat_count = 0;
+                    $price2_detail = 0;
+                    $price2 = 0;
+                    $shippingCost = 0;
+                    $discount = 0;
+                    $costType = "";
 
-                    $Total = number_format(($this->cart->total()-$_SESSION['discount'])+$_SESSION['shippingCost'], 2, '.', '');
-                    $shippingCost = number_format($_SESSION['shippingCost']);
-                    $discount = number_format($_SESSION['discount']);
-                    $subTotal = number_format($this->cart->total(), 2, '.', '');
+                    $invoiceTemp = $this->product_model->getInvoiceTemp($invoceNo); 
+                    if(isset($invoiceTemp[0])){
+                      if($invoiceTemp[0]->invoice_no != ""){ 
+                        $discount =  $invoiceTemp[0]->invoice_discount;  
+                        $shippingCost = $invoiceTemp[0]->invoice_shipping_cost; 
+                         
+                        $total =  $invoiceTemp[0]->total;
+                        $subTotal =   $invoiceTemp[0]->sub_total;//number_format($this->cart->total(), 2, '.', '');
+                        $vat =  $invoiceTemp[0]->vat;
+                        $vat_count =  $invoiceTemp[0]->invoice_vat_count;
 
+                        $price2_detail = $invoiceTemp[0]->invoice_price2_detail;
+                        $price2 = $invoiceTemp[0]->invoice_price2;
+                        $customerName = $invoiceTemp[0]->invoice_consignee;
+                        $customerAddress = $invoiceTemp[0]->invoice_ship_to;
+                        $costType = $invoiceTemp[0]->costType;
+                      }
+                    }
+                    
 
                     $dataInvoice = array(
                       'invoice_no' => $invoceNo, 
@@ -319,7 +345,9 @@
                       'invoice_sub_total' => $subTotal,
                       'invoice_discount' => $discount,
                       'invoice_shipping_cost' => $shippingCost,
-                      'invoice_total' => $Total,
+                      'invoice_total' => $total,
+                      'typeCose' => $costType,
+                      'invoice_currency_code' => $_SESSION['currencyType'],
                       'invoice_status' => 'draft',
                       'createdDate' => 'NOW()'   
                   ); 
@@ -342,6 +370,11 @@
                       ); 
               
                       $this->checkout_model->saveInvoiceDetail($dataInvoiceDetail,$invoceNo);
+                  }
+
+                  if(isset($_SESSION['oldInvoiceNo'])){
+                    $this->checkout_model->deleteInvoice($_SESSION['oldInvoiceNo']);
+                    $this->checkout_model->deleteDetail($_SESSION['oldInvoiceNo']);
                   }
                     // header
                     // $spreadsheet->getActiveSheet()->setCellValue('A1', 'รหัสพนักงาน')
@@ -368,6 +401,8 @@
                     $drawing->setWorksheet($spreadsheet->getActiveSheet());
                     $spreadsheet->getActiveSheet()->getStyle('A1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
 
+                 
+                    //$spreadsheet->getActiveSheet()->setCellValue('F1', 'FAIRTEX EQUIPMENT CO.,LTD.')
                     $spreadsheet->getActiveSheet()->setCellValue('F1', 'FAIRTEX EQUIPMENT CO.,LTD.')
                         ->setCellValue('F2', '99/5, MOO3, SOI BOONTHAMANUSORN')
                         ->setCellValue('F3', 'THEPARAK RD.,BANGPLEEYAI, BANGPLEE,')
@@ -463,38 +498,59 @@
                         $rowCount++;
                     }
 
+                    $currencyType = "";
+
+                    if($_SESSION['currencyType'] == 'USD'){
+                        $currencyType = ' $';
+                    }else{
+                        $currencyType = ' ฿';
+                    }
+ 
                     
                     $spreadsheet->getActiveSheet()->SetCellValue('F'.($rowCount+2), 'Sub total');
                     $spreadsheet->getActiveSheet()->getStyle('F'.($rowCount+2))->getFont()->setSize(14);
                     $spreadsheet->getActiveSheet()->getStyle('F'.($rowCount+2))->getFont()->setBold( true );
-                    $spreadsheet->getActiveSheet()->SetCellValue('G'.($rowCount+2), $subTotal.' $');
+                    $spreadsheet->getActiveSheet()->SetCellValue('G'.($rowCount+2), number_format($subTotal).$currencyType);
                     $spreadsheet->getActiveSheet()->getStyle('G'.($rowCount+2))->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
 
             
                     $spreadsheet->getActiveSheet()->SetCellValue('F'.($rowCount+3), 'Discount');
                     $spreadsheet->getActiveSheet()->getStyle('F'.($rowCount+3))->getFont()->setSize(14);
                     $spreadsheet->getActiveSheet()->getStyle('F'.($rowCount+3))->getFont()->setBold( true );
-                    $spreadsheet->getActiveSheet()->SetCellValue('G'.($rowCount+3), $discount.' $');
+                    $spreadsheet->getActiveSheet()->SetCellValue('G'.($rowCount+3), number_format($discount) .$currencyType);
                     $spreadsheet->getActiveSheet()->getStyle('G'.($rowCount+3))->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
 
             
                     $spreadsheet->getActiveSheet()->SetCellValue('F'.($rowCount+4), 'shipping');
                     $spreadsheet->getActiveSheet()->getStyle('F'.($rowCount+4))->getFont()->setSize(14);
                     $spreadsheet->getActiveSheet()->getStyle('F'.($rowCount+4))->getFont()->setBold( true );
-                    $spreadsheet->getActiveSheet()->SetCellValue('G'.($rowCount+4), $shippingCost.' $');
+                    $spreadsheet->getActiveSheet()->SetCellValue('G'.($rowCount+4), number_format($shippingCost) .$currencyType);
                     $spreadsheet->getActiveSheet()->getStyle('G'.($rowCount+4))->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
-
-            
-                    $spreadsheet->getActiveSheet()->SetCellValue('F'.($rowCount+5), 'Total');
+ 
+                   
+                    $spreadsheet->getActiveSheet()->SetCellValue('F'.($rowCount+5), $price2_detail);
                     $spreadsheet->getActiveSheet()->getStyle('F'.($rowCount+5))->getFont()->setSize(14);
                     $spreadsheet->getActiveSheet()->getStyle('F'.($rowCount+5))->getFont()->setBold( true );
-                    $spreadsheet->getActiveSheet()->SetCellValue('G'.($rowCount+5), $Total.' $');
+                    $spreadsheet->getActiveSheet()->SetCellValue('G'.($rowCount+5), number_format($price2));
                     $spreadsheet->getActiveSheet()->getStyle('G'.($rowCount+5))->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+ 
+                    $spreadsheet->getActiveSheet()->SetCellValue('F'.($rowCount+6), 'Vat '. $vat . '%');
+                    $spreadsheet->getActiveSheet()->getStyle('F'.($rowCount+6))->getFont()->setSize(14);
+                    $spreadsheet->getActiveSheet()->getStyle('F'.($rowCount+6))->getFont()->setBold( true );
+                    $spreadsheet->getActiveSheet()->SetCellValue('G'.($rowCount+6), number_format($vat_count).$currencyType);
+                    $spreadsheet->getActiveSheet()->getStyle('G'.($rowCount+6))->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
 
-            
-                    $spreadsheet->getActiveSheet()->SetCellValue('A'.($rowCount+7), 'BRAND : FAIRTEX');
+                    $spreadsheet->getActiveSheet()->SetCellValue('F'.($rowCount+7), 'Total');
                     $spreadsheet->getActiveSheet()->getStyle('F'.($rowCount+7))->getFont()->setSize(14);
                     $spreadsheet->getActiveSheet()->getStyle('F'.($rowCount+7))->getFont()->setBold( true );
+                    $spreadsheet->getActiveSheet()->SetCellValue('G'.($rowCount+7), number_format($total).$currencyType);
+                    $spreadsheet->getActiveSheet()->getStyle('G'.($rowCount+7))->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+
+
+                    $spreadsheet->getActiveSheet()->SetCellValue('A'.($rowCount+9), 'BRAND : FAIRTEX');
+                    $spreadsheet->getActiveSheet()->getStyle('F'.($rowCount+9))->getFont()->setSize(14);
+                    $spreadsheet->getActiveSheet()->getStyle('F'.($rowCount+9))->getFont()->setBold( true );
+                    
                     // cell value
                     // $spreadsheet->getActiveSheet()->fromArray($employees, null, 'A30');
 
@@ -625,7 +681,7 @@
 
   <!-- Custom scripts for this template -->
   <script src="<?php echo base_url(); ?>assets/js/freelancer.min.js"></script>
-
+ 
   <script>   
  
     $(document).ready(function(){
@@ -655,14 +711,20 @@
       });
 
     });
+    
 
     function totalFunction(){
 
       var total = document.getElementById("total").value;
       var discount = document.getElementById("discount").value;
       var shipping = document.getElementById("shipping").value;
+      var invoice_consignee = document.getElementById("consigee").value;
+      var invoice_ship_to = document.getElementById("shipTo").value;
+      var costType = document.getElementById("costType").value;
+      
  
-      var summary = document.getElementById("sum").value.replace(",", "");
+     // var summary = document.getElementById("sum").value.replace(",", "");
+      var summary = document.getElementById("total").value.replace(",", "");
 
       var vat =  document.getElementById("vat").value;
       var perc = 0;
@@ -678,38 +740,61 @@
       var sumInvoice = (parseInt(summary)-parseInt(discount))+parseInt(shipping);
         
         
+      var price2 = document.getElementById("addPrice2").value.replace(",", "");
+
+      var namePrice2 = document.getElementById("namePrice2").value;
+
+      if(price2 == ""){
+        price2 = 0;
+      }else{
+        sumInvoice = parseInt(sumInvoice)+parseInt(price2);
+      }
+
       if(vat == ""){
           vat = 0;
       }else{
           perc =  (vat/100) * sumInvoice;
       }
-
-      alert("shipping : "+parseInt(shipping));
-      alert("discount : "+parseInt(discount));
-      alert("summary : "+parseInt(summary));
   
- 
-      // if(discount != "" && shipping != ""){
-      //     summary = (summary-discount)+parseInt(shipping);
-      //  }else{
-      //     if(discount != ""){
-      //       summary = summary-discount;
-      //     }
- 
-      //     if(shipping != ""){
-      //       summary = parseInt(summary)+parseInt(shipping);
-      //     }
-      //  } 
-
-   
-
       var headingDiv = document.getElementById("summary"); 
-          headingDiv.innerHTML =  new Intl.NumberFormat().format(sumInvoice)+'$' ;
+          headingDiv.innerHTML =  new Intl.NumberFormat().format(parseInt(sumInvoice)+parseInt(perc))+'$' ;
 
-          $('#sum').val(sumInvoice); 
-          $('#input').val(new Intl.NumberFormat().format(parseInt(perc))+'$'); 
-     // alert('total : '+total);
-    }
+        // $('#sum').val(sumInvoice); 
+        $('#input').val(new Intl.NumberFormat().format(parseInt(perc))+'$'); 
+
+        //sessionStorage.setItem("lastname", "Smith");
+
+        var invoiceNo = document.getElementById("invoiceNo").value;
+        var total1 = parseInt(sumInvoice)+parseInt(perc);
+        var sub_total = total;
+  
+        $.ajax({
+           url: '<?php echo base_url(); ?>loaddatatable/setreport',
+           type: 'POST',
+           data: {
+                invoiceNo : invoiceNo,
+                discount : discount, 
+                shipping : shipping,
+                vat       : vat,
+                price2 : price2,
+                namePrice2 : namePrice2,
+                invoice_vat_count   : parseInt(perc),
+                total : parseInt(total1),
+                sub_total : parseInt(sub_total),
+                invoice_consignee : invoice_consignee,
+                invoice_ship_to : invoice_ship_to,
+                costType : costType
+              },
+           error: function() {
+              alert('Something is wrong');
+           },
+           success: function(response) { 
+             $("#divTotal").load(window.location + " #divTotal"); 
+           }
+ 
+        }); 
+       
+    } 
 
     function delCart(rowid){ 
         $.ajax({
@@ -725,31 +810,7 @@
            }
         }); 
  
-    }
-
-    function calculate() {
-        var vat =  document.getElementById("vat").value;
-        var summary =  document.getElementById("sum").value.replace(",", "");
- 
-        var perc =  (vat/100) * summary;
-        
-        var headingDiv = document.getElementById("summary"); 
-          headingDiv.innerHTML =  new Intl.NumberFormat().format(parseInt(summary)+parseInt(perc))+'$' ;
-
-        // var sumHide = document.getElementById("summaryHide"); 
-        // sumHide.innerHTML =  parseInt(summary)+parseInt(perc);
- 
-        $('#input').val(new Intl.NumberFormat().format(parseInt(perc))+'$'); 
-        $('#sum').val(parseInt(summary)+parseInt(perc)); 
-
-       // $('#vatCal').val("GeeksForGeeks"); 
-        
-       // alert(document.getElementById("vat"));
-        // var vatValDiv = document.getElementById("vatCal"); 
-        // vatValDiv.innerHTML = "test";
-
-       
-    }
+    } 
 
     // (".downloadLink").click(
     //     function(e) {   

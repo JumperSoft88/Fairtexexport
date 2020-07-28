@@ -109,4 +109,51 @@ class Product_model extends CI_Model
         $this->db->update('tbl_product_items', $data);
     }
 
+    public function updateInvoiceTemp($invoice_no,$data)
+    { 
+        $this->db->where('invoice_no', $invoice_no);
+        $this->db->update('tbl_invoice_temp', $data);
+    }
+
+    public function getInvoiceTemp($invoice_no)
+    {
+        $this->db->select('*'); 
+        $this->db->from('tbl_invoice_temp');  
+        $this->db->where('invoice_no', $invoice_no); 
+        
+        $query = $this->db->get();
+        $result = $query->result(); 
+  
+        return $result;
+    } 
+
+    public function insertInvoiceTemp($data)
+    {
+        $this->db->insert('tbl_invoice_temp', $data);
+    }
+
+    public function getInvoiceById($id)
+    {
+        $this->db->select('*'); 
+        $this->db->from('tbl_invoice');  
+        $this->db->where('invoice_id', $id); 
+        
+        $query = $this->db->get();
+        $result = $query->result(); 
+  
+        return $result;
+    } 
+
+    public function getInvoiceDetailByInvoid($invoiceNo)
+    {
+        $this->db->select('*'); 
+        $this->db->from('tbl_invoice_detail');  
+        $this->db->where('product_invoice_no', $invoiceNo); 
+        
+        $query = $this->db->get();
+        $result = $query->result(); 
+  
+        return $result;
+    } 
+
 }

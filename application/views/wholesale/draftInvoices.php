@@ -59,12 +59,12 @@
           <li class="nav-item mx-0 mx-lg-1">
           <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="<?php echo base_url(); ?>loaddatatable">Product</a>
           </li>
-          <li class="nav-item mx-0 mx-lg-1">
+          <!-- <li class="nav-item mx-0 mx-lg-1">
             <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#about">About</a>
           </li>
           <li class="nav-item mx-0 mx-lg-1">
             <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#contact">Contact</a>
-          </li>
+          </li> -->
 		      <li class="nav-item mx-0 mx-lg-1">
 
           <?php  if (isset($_SESSION['member_username'])){ ?>
@@ -193,15 +193,15 @@
                     <div class="col-md-5">
                         <div class="card border-info mx-sm-1 p-3">
                             <div class="card border-info shadow text-info p-3 my-card" ><span class="fa fa-usd" aria-hidden="true"></span></div>
-                            <div class="text-info text-center mt-3"><h4>Sub Total</h4></div>
-                            <div class="text-info text-center mt-2"><h1><?php echo number_format($_SESSION['draftSumSubTotal']);?> $</h1></div>
+                            <div class="text-info text-center mt-3"><h4>USD Total</h4></div>
+                            <div class="text-info text-center mt-2"><h1><?php echo number_format($_SESSION['draftSumTotalUSD']);?> $</h1></div>
                         </div>
                     </div>
                     <div class="col-md-5">
                         <div class="card border-success mx-sm-1 p-3">
                             <div class="card border-success shadow text-success p-3 my-card"><span class="fa fa-money" aria-hidden="true"></span></div>
-                            <div class="text-success text-center mt-3"><h4>Total </h4></div>
-                            <div class="text-success text-center mt-2"><h1><?php echo number_format($_SESSION['draftSumTotal']);?> $</h1></div>
+                            <div class="text-success text-center mt-3"><h4>Baht Total </h4></div>
+                            <div class="text-success text-center mt-2"><h1><?php echo number_format($_SESSION['draftSumTotalTHB']);?> ฿</h1></div>
                         </div>
                     </div>
                 </div> 
@@ -212,11 +212,11 @@
                             <th>Invoice number</th>
                             <th>Consignee</th>
                             <th>Ship to</th>
-                            <th>Date</th>
+                            <!-- <th>Date</th> -->
                             <th>Sub total</th>
                             <th>Discount</th>
                             <th>Total</th> 
-                            <th></th>
+                            <th style="width: 150px;"></th>
                         </tr>
                     </thead>
                     <body>
@@ -226,12 +226,12 @@
                                 <td><?php echo $item->invoice_no;?></td>
                                 <td><?php echo $item->invoice_consignee; ?></td>
                                 <td><?php echo $item->invoice_ship_to;?></td>
-                                <td><?php echo $item->invoice_date;?></td>
-                                <td><?php echo $item->invoice_sub_total; ?></td>
-                                <td><?php echo $item->invoice_discount;?></td>
-                                <td><?php echo $item->invoice_total;?></td> 
-                                <td width="13%"> 
-                                    <a type="button" class="btn btn-info   "  href=""><span class="fa fa-pencil-square-o" aria-hidden="true"></a>  
+                                <!-- <td><?php echo $item->invoice_date;?></td> -->
+                                <td><?php echo number_format($item->invoice_sub_total); if(	$item->invoice_currency_code == 'USD'){ echo ' $';}else{ echo ' ฿';} ?></td>
+                                <td><?php echo number_format($item->invoice_discount); if(	$item->invoice_currency_code == 'USD'){ echo ' $';}else{ echo ' ฿';}?></td>
+                                <td><?php echo number_format($item->invoice_total); if(	$item->invoice_currency_code == 'USD'){ echo ' $';}else{ echo ' ฿';}?></td> 
+                                <td> 
+                                    <a type="button" class="btn btn-info   "  href="<?php echo base_url(); ?>loaddatatable/retriveBuyInvoice/<?php echo $item->invoice_id;?>"><span class="fa fa-pencil-square-o" aria-hidden="true"></a>  
                                     <a type="button" class="btn btn-success "  onclick="funcSuccess(<?php echo $item->invoice_id;?>)"><span class="fa fa-check" ></a>  
                                 </td>
                             </tr>
@@ -329,18 +329,38 @@
 
         function funcSuccess($id) {
           $.ajax({
-          url: '<?php echo base_url(); ?>draftInvoices/updateStatus',
-          type: 'POST',
-          data: {id : $id },
-          error: function() {
-              alert('Something is wrong');
-          },
-          success: function(response) { 
-                //$("#mydatatable").load(window.location + " #mydatatable");
+            url: '<?php echo base_url(); ?>draftInvoices/updateStatus',
+            type: 'POST',
+            data: {id : $id },
+            error: function() {
+                alert('Something is wrong');
+            },
+            success: function(response) { 
+                  //$("#mydatatable").load(window.location + " #mydatatable");
 
-                location.reload();
-          }
-        }); 
+                  location.reload();
+            }
+          }); 
+        }
+
+
+        function retriveBuyInvoice(id) {
+ 
+          $.ajax({
+            url: '<?php echo base_url(); ?>loaddatatable/retriveBuyInvoice',
+            type: 'POST',
+            data: {id : id },
+            error: function() {
+                alert('Something is wrong');
+            },
+            success: function(response) { 
+              alert("test");
+                  //$("#mydatatable").load(window.location + " #mydatatable");
+
+              //    location.reload();
+            }
+          }); 
+          
         }
     </script>
 

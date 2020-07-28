@@ -31,6 +31,19 @@ class Checkout_model extends CI_Model
         $this->db->delete('tbl_invoice_detail');
     }
 
+    public function deleteInvoice($invoiceNo)
+    { 
+        $this->db->where('invoice_no', $invoiceNo);
+        $this->db->delete('tbl_invoice');
+    }
+
+    public function deleteDetail($invoiceNo)
+    { 
+        $this->db->where('product_invoice_no', $invoiceNo);
+        $this->db->delete('tbl_invoice_detail');
+    }
+
+
     public function saveInvoiceDetail($data,$invoiceNo)
     {
         // $sql = "SELECT product_invoice_no from tbl_invoice_detail Where product_invoice_no = '{$invoiceNo}' LIMIT 1";

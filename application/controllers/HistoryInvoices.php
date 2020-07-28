@@ -12,15 +12,15 @@ class HistoryInvoices extends CI_Controller {
     public function index() {  
          
         $historyInvoice = $this->historyInvoices_model->getAllInvoice(); 
-        $sumTotal = $this->historyInvoices_model->getSumTotal();
-        $sumSubTotal = $this->historyInvoices_model->getSumSubTotal();
+        $sumTotalUSD = $this->historyInvoices_model->getSumTotalUSD();
+        $sumTotalTHB = $this->historyInvoices_model->getSumTotalTHB();
 
       //  echo '>>> '.$sumTotal[0]->sum;
 
         $newSession = array(
             'historyInvoice' => $historyInvoice,
-            'sumTotal' => $sumTotal[0]->sum,
-            'sumSubTotal' => $sumSubTotal[0]->subSum
+            'sumTotalUSD' => $sumTotalUSD[0]->sumUSD,
+            'sumTotalTHB' => $sumTotalTHB[0]->sumTHB
         );
     
         $this->session->set_userdata($newSession);

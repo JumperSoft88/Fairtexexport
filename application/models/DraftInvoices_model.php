@@ -11,28 +11,31 @@ class DraftInvoices_model extends CI_Model
         $this->db->select('*');
         $this->db->from('tbl_invoice'); 
         $this->db->where('invoice_status','draft');
+        $this->db->order_by('invoice_id ', 'DESC');
         $query = $this->db->get();
         $result = $query->result(); 
  
         return $result;
     }
 
-    public function getDraftSumTotal()
+    public function getDraftSumTotalUSD()
     { 
-        $this->db->select('SUM(invoice_total) as sum');
+        $this->db->select('SUM(invoice_total) as sumUSD');
         $this->db->from('tbl_invoice'); 
         $this->db->where('invoice_status','draft');
+        $this->db->where('invoice_currency_code','USD');
         $query = $this->db->get();
         $result = $query->result();
  
         return $result;
     }
 
-    public function getDraftSumSubTotal()
+    public function getDraftSumTotalTHB()
     { 
-        $this->db->select('SUM(invoice_sub_total) as subSum');
+        $this->db->select('SUM(invoice_total) as sumTHB');
         $this->db->from('tbl_invoice'); 
         $this->db->where('invoice_status','draft');
+        $this->db->where('invoice_currency_code','THB');
         $query = $this->db->get();
         $result = $query->result();
  

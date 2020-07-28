@@ -16,20 +16,22 @@ class HistoryInvoices_model extends CI_Model
         return $result;
     }
 
-    public function getSumTotal()
+    public function getSumTotalUSD()
     { 
-        $this->db->select('SUM(invoice_total) as sum');
+        $this->db->select('SUM(invoice_total) as sumUSD');
         $this->db->from('tbl_invoice'); 
+        $this->db->where('invoice_currency_code','USD');
         $query = $this->db->get();
         $result = $query->result();
  
         return $result;
     }
 
-    public function getSumSubTotal()
+    public function getSumTotalTHB()
     { 
-        $this->db->select('SUM(invoice_sub_total) as subSum');
+        $this->db->select('SUM(invoice_sub_total) as sumTHB');
         $this->db->from('tbl_invoice'); 
+        $this->db->where('invoice_currency_code','THB');
         $query = $this->db->get();
         $result = $query->result();
  

@@ -16,13 +16,19 @@ class Checkout extends CI_Controller {
 
         // unset(
         //     $_SESSION['customerName'],
-        //     $_SESSION['customerAddress'],
-        //     $_SESSION['newTel'],
-        //     $_SESSION['newEmail'] 
-
+        //     $_SESSION['customerAddress']
+        //     // $_SESSION['newTel'],
+        //     // $_SESSION['newEmail']  
         // ); 
 
+        //echo '=>  '.$_SESSION['customerName']; 
+        //echo '=>  '.$_SESSION['customerType'];
 
+        unset(
+            $_SESSION['fullDate'], 
+            $_SESSION['invoceNo']
+        ); 
+    
         $newCustomerName = "";  
         $newAddress = "";
         $newTel = "";
@@ -94,9 +100,13 @@ class Checkout extends CI_Controller {
          
         $data =  array(
             'fullDate' => $fullDate,
-            'invoceNo' => $invoceNo
-        );
+            'invoceNo' => $invoceNo,
+            'customerName' => $this->input->post('customerName'),
+            'customerAddress' => $this->input->post('address'),
+            'costType' => $this->input->post('costType')
 
+        );
+ 
         if(isset($_SESSION['fullDate'])
             && isset($_SESSION['invoceNo']) ){
             //  echo 'Test';
@@ -109,6 +119,26 @@ class Checkout extends CI_Controller {
 
             $this->session->set_userdata($inSession);
         }
+  
+        //echo '=>  '.$this->input->post('tel');
+        //echo '=>  '.$this->input->post('email');
+
+        $teSession = array(
+            'customerTel' => $this->input->post('tel'),
+            'email' => $this->input->post('email')
+        ); 
+
+        $this->session->set_userdata($teSession);
+        //echo '>>>  '.$this->input->post('customerName');
+
+        //echo '-> '.$_SESSION['customerName'];
+
+        $this->session->set_userdata('customerName', $this->input->post('customerName'));
+        $this->session->set_userdata('customerAddress', $this->input->post('address'));
+
+      
+
+
 
         $this->load->view('wholesale/checkout',$data);
     }
