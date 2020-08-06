@@ -33,6 +33,7 @@ class Checkout extends CI_Controller {
         $newAddress = "";
         $newTel = "";
         $newEmail = "";
+        $invoceNo = "";
 
         $maxId = 0;
         $id = 0;
@@ -137,6 +138,47 @@ class Checkout extends CI_Controller {
         $this->session->set_userdata('customerAddress', $this->input->post('address'));
 
       
+        if($_SESSION['userType'] != 'administrator'){
+
+            $discount  = $_SESSION['discount'];
+            $shippingCost = $_SESSION['shippingCost'];
+            $costType = $_SESSION['costType'];
+
+            $totalBeforeDiscount = $this->cart->total() - $discount;
+
+
+            $vat_count =  (7/100) * $totalBeforeDiscount;
+           
+            $total = $totalBeforeDiscount + $vat_count;
+
+            $dataInserTemp = array(
+                'invoice_no' => $_SESSION['invoceNo'], 
+                'invoice_discount' =>  $discount , 
+                'invoice_shipping_cost' => $shippingCost, 
+                'vat' => 7, 
+                'invoice_vat_count' => $vat_count,  
+                'total' => $total,
+                'sub_total' => $totalBeforeDiscount, 
+                'costType' => $costType
+            ); 
+
+            
+ 
+            $invoiceTemp = $this->product_model->getInvoiceTemp($invoceNo); 
+
+            if($invoiceTemp[0] != ""){ 
+                if($invoiceTemp[0]->invoice_no != ""){ 
+                    $this->product_model->updateInvoiceTemp($_SESSION['invoceNo'],$dataInserTemp); 
+                }else{
+                    $this->product_model->insertInvoiceTemp($dataInserTemp); 
+                  
+                } 
+            }else{
+                $this->product_model->insertInvoiceTemp($dataInserTemp); 
+              
+            } 
+ 
+        }
 
 
 

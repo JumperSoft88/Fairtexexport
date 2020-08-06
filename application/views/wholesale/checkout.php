@@ -581,8 +581,262 @@
 
 
             <?php }else{?>  
-               <div class="col-2"><a href="<?php echo base_url(); ?>export/excel" class="btn btn-success" style="width :120px;">Sent order.</a></div>
+               <div class="col-2"><a href="excel/fairtex-invoice.xlsx" class="btn btn-success" style="width :120px;">Sent order.</a></div>
+               <?php
 
+                    // mockup data by json file ex. you can use retrive data from db.
+                    $json = file_get_contents('employee.json');
+                    $employees = json_decode($json, true);
+
+                    $spreadsheet = new Spreadsheet();
+                    $sheet = $spreadsheet->getActiveSheet();
+
+                    $fullDate = $_SESSION['fullDate'];
+                    $invoceNo = $_SESSION['invoceNo'];
+                    //$newEmail = $_SESSION['newEmail'];
+                    //$newTel = $_SESSION['newTel'];
+                    $customerName = $_SESSION['customerName'];
+                    $customerAddress = $_SESSION['customerAddress'];
+
+                    $total = 0;
+                    $subTotal = 0;
+                    $vat = 0;
+                    $vat_count = 0;
+                    $price2_detail = 0;
+                    $price2 = 0;
+                    $shippingCost = 0;
+                    $discount = 0;
+                    $costType = "";
+
+                    $invoiceTemp = $this->product_model->getInvoiceTemp($invoceNo); 
+                    if(isset($invoiceTemp[0])){
+                      if($invoiceTemp[0]->invoice_no != ""){ 
+                        $discount =  $invoiceTemp[0]->invoice_discount;  
+                        $shippingCost = $invoiceTemp[0]->invoice_shipping_cost; 
+                        
+                        $total =  $invoiceTemp[0]->total;
+                        $subTotal =   $invoiceTemp[0]->sub_total;//number_format($this->cart->total(), 2, '.', '');
+                        $vat =  $invoiceTemp[0]->vat;
+                        $vat_count =  $invoiceTemp[0]->invoice_vat_count;
+
+                        $price2_detail = $invoiceTemp[0]->invoice_price2_detail;
+                        $price2 = $invoiceTemp[0]->invoice_price2;
+                        $customerName = $invoiceTemp[0]->invoice_consignee;
+                        $customerAddress = $invoiceTemp[0]->invoice_ship_to;
+                        $costType = $invoiceTemp[0]->costType;
+                      }
+                    }
+
+
+                    $dataInvoice = array(
+                      'invoice_no' => $invoceNo, 
+                      'invoice_consignee' => $customerName, 
+                      'invoice_ship_to' => $customerAddress, 
+                      'invoice_by' => $customerName, 
+                      'invoice_sub_total' => $subTotal,
+                      'invoice_discount' => $discount,
+                      'invoice_shipping_cost' => $shippingCost,
+                      'invoice_total' => $total,
+                      'typeCose' => $costType,
+                      'invoice_currency_code' => $_SESSION['currencyType'],
+                      'invoice_status' => 'draft',
+                      'createdDate' => 'NOW()'   
+                    ); 
+
+                    $this->checkout_model->saveInvoice($dataInvoice,$invoceNo);
+
+                    $this->checkout_model->deleteInvoiceDetail($invoceNo);
+
+                    foreach ($this->cart->contents() as $items){
+
+                      $dataInvoiceDetail = array(
+                          'product_invoice_no' => $invoceNo, 
+                          'product_name' => $items['name'], 
+                          'product_description' => $items['name'], 
+                          'product_size' => $items['options']['size'], 
+                          'product_color' => $items['options']['color'],
+                          'product_qty' => $items['qty'], 
+                          'product_unit_price' => $items['price'], 
+                          'product_amount' => $items['subtotal']
+                      ); 
+
+                      $this->checkout_model->saveInvoiceDetail($dataInvoiceDetail,$invoceNo);
+                    }
+
+                    if(isset($_SESSION['oldInvoiceNo'])){
+                    $this->checkout_model->deleteInvoice($_SESSION['oldInvoiceNo']);
+                    $this->checkout_model->deleteDetail($_SESSION['oldInvoiceNo']);
+                    }
+                    // header
+                    // $spreadsheet->getActiveSheet()->setCellValue('A1', 'รหัสพนักงาน')
+                    //     ->setCellValue('B1', 'ชื่อ')
+                    //     ->setCellValue('C1', 'นามสกุล')
+                    //     ->setCellValue('D1', 'อีเมล์')
+                    //     ->setCellValue('E1', 'เพศ')
+                    //     ->setCellValue('F1', 'เงินเดือน')
+                    //     ->setCellValue('G1', 'เบอร์โทรศัพท์');
+
+                    $imagelink = APPPATH.'logo/Fairtex-shop.png';
+                    $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\HeaderFooterDrawing();
+
+                    $spreadsheet->getActiveSheet()->getRowDimension('A1')->setRowHeight(80);
+                    $drawing->setName('logo');
+                    $drawing->setPath($imagelink); 
+                        //setOffsetX works properly
+                    $drawing->setOffsetX(15); 
+                    $drawing->setOffsetY(15);                
+                    //set width, height
+                    $drawing->setWidth(280); 
+                    $drawing->setHeight(100); 
+                    $drawing->setCoordinates('A1');   
+                    $drawing->setWorksheet($spreadsheet->getActiveSheet());
+                    $spreadsheet->getActiveSheet()->getStyle('A1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+
+
+                    //$spreadsheet->getActiveSheet()->setCellValue('F1', 'FAIRTEX EQUIPMENT CO.,LTD.')
+                    $spreadsheet->getActiveSheet()->setCellValue('F1', 'FAIRTEX EQUIPMENT CO.,LTD.')
+                        ->setCellValue('F2', '99/5, MOO3, SOI BOONTHAMANUSORN')
+                        ->setCellValue('F3', 'THEPARAK RD.,BANGPLEEYAI, BANGPLEE,')
+                        ->setCellValue('F4', 'SAMUTPRAKARN 10540, THAILAND')
+                        ->setCellValue('F5', 'TEL (662)3855148,3855149   FAX(662)3855403') 
+                        ->setCellValue('A7', 'CONSIGNEE:') 
+                        ->setCellValue('B7', $customerName) 
+                        ->setCellValue('C7', 'SHIP TO : ') 
+                        ->setCellValue('D7', $customerAddress) 
+                        ->setCellValue('E8', 'Invoice No : ') 
+                        ->setCellValue('F8', $invoceNo) 
+                        ->setCellValue('E9', 'Date : ') 
+                        ->setCellValue('F9', $fullDate) 
+                         
+                        ->setCellValue('A12', 'SKU#')
+                        ->setCellValue('B12', 'Description')
+                        ->setCellValue('C12', 'Size')
+                        ->setCellValue('D12', 'Color')
+                        ->setCellValue('E12', 'Qty.')
+                        ->setCellValue('F12', 'UNIT PRICE')
+                        ->setCellValue('G12', 'AMOUNT (USD)');
+                        ;
+
+                        $spreadsheet->getActiveSheet()->getStyle('A12')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                        $spreadsheet->getActiveSheet()->getStyle('B12')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                        $spreadsheet->getActiveSheet()->getStyle('C12')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                        $spreadsheet->getActiveSheet()->getStyle('D12')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                        $spreadsheet->getActiveSheet()->getStyle('E12')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                        $spreadsheet->getActiveSheet()->getStyle('F12')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+                        $spreadsheet->getActiveSheet()->getStyle('G12')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+
+
+                    foreach(range('A','B') as $columnID) {
+                      $spreadsheet->getActiveSheet()->getColumnDimension($columnID)
+                          ->setAutoSize(true);
+                    }
+
+                    $spreadsheet->getActiveSheet()->getStyle("F1:F2")->getFont()->setSize(14);
+                    $spreadsheet->getActiveSheet()->getStyle("F3:F4")->getFont()->setSize(14);
+                    $spreadsheet->getActiveSheet()->getStyle("F5:A7")->getFont()->setSize(14);
+                    $spreadsheet->getActiveSheet()->getStyle("C7:E8")->getFont()->setSize(14);
+                    $spreadsheet->getActiveSheet()->getStyle("E9")->getFont()->setSize(14);
+                    $spreadsheet->getActiveSheet()->getStyle("A12:B12")->getFont()->setSize(14);
+                    $spreadsheet->getActiveSheet()->getStyle("C12:D12")->getFont()->setSize(14);
+                    $spreadsheet->getActiveSheet()->getStyle("E12:F12")->getFont()->setSize(14);
+                    $spreadsheet->getActiveSheet()->getStyle("A7:G12")->getFont()->setSize(14);
+
+                    $spreadsheet->getActiveSheet()->getStyle('F1')->getFont()->setBold( true );
+                    $spreadsheet->getActiveSheet()->getStyle('F2')->getFont()->setBold( true );
+                    $spreadsheet->getActiveSheet()->getStyle('F3')->getFont()->setBold( true );
+                    $spreadsheet->getActiveSheet()->getStyle('F4')->getFont()->setBold( true );
+                    $spreadsheet->getActiveSheet()->getStyle('F5')->getFont()->setBold( true );
+                    $spreadsheet->getActiveSheet()->getStyle('A7')->getFont()->setBold( true );
+                    $spreadsheet->getActiveSheet()->getStyle('C7')->getFont()->setBold( true );
+                    $spreadsheet->getActiveSheet()->getStyle('E8')->getFont()->setBold( true );
+                    $spreadsheet->getActiveSheet()->getStyle('E9')->getFont()->setBold( true );
+                    $spreadsheet->getActiveSheet()->getStyle('A12')->getFont()->setBold( true ); 
+                    $spreadsheet->getActiveSheet()->getStyle('B12')->getFont()->setBold( true );
+                    $spreadsheet->getActiveSheet()->getStyle('C12')->getFont()->setBold( true );
+                    $spreadsheet->getActiveSheet()->getStyle('D12')->getFont()->setBold( true );
+                    $spreadsheet->getActiveSheet()->getStyle('E12')->getFont()->setBold( true );
+                    $spreadsheet->getActiveSheet()->getStyle('F12')->getFont()->setBold( true );
+                    $spreadsheet->getActiveSheet()->getStyle('G12')->getFont()->setBold( true );
+
+
+
+
+                    $rowCount = 13;
+                    foreach ($this->cart->contents() as $items){
+                        $spreadsheet->getActiveSheet()->SetCellValue('A'.$rowCount, $items['name']);
+                        $spreadsheet->getActiveSheet()->SetCellValue('B'.$rowCount, $items['name']);
+                        $spreadsheet->getActiveSheet()->SetCellValue('C'.$rowCount, $items['options']['size']);
+                        $spreadsheet->getActiveSheet()->SetCellValue('D'.$rowCount, $items['options']['color']);
+                        $spreadsheet->getActiveSheet()->SetCellValue('E'.$rowCount, $items['qty']);
+                        $spreadsheet->getActiveSheet()->SetCellValue('F'.$rowCount, $items['price']);
+                        $spreadsheet->getActiveSheet()->SetCellValue('G'.$rowCount, number_format($items['subtotal']));
+                        
+                        $spreadsheet->getActiveSheet()->getStyle('G'.$rowCount)->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+
+                        
+                        $rowCount++;
+                    }
+
+                    $currencyType = "";
+
+                    if($_SESSION['currencyType'] == 'USD'){
+                        $currencyType = ' $';
+                    }else{
+                        $currencyType = ' ฿';
+                    }
+
+
+                    $spreadsheet->getActiveSheet()->SetCellValue('F'.($rowCount+2), 'Sub total');
+                    $spreadsheet->getActiveSheet()->getStyle('F'.($rowCount+2))->getFont()->setSize(14);
+                    $spreadsheet->getActiveSheet()->getStyle('F'.($rowCount+2))->getFont()->setBold( true );
+                    $spreadsheet->getActiveSheet()->SetCellValue('G'.($rowCount+2), number_format($subTotal).$currencyType);
+                    $spreadsheet->getActiveSheet()->getStyle('G'.($rowCount+2))->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+
+
+                    $spreadsheet->getActiveSheet()->SetCellValue('F'.($rowCount+3), 'Discount');
+                    $spreadsheet->getActiveSheet()->getStyle('F'.($rowCount+3))->getFont()->setSize(14);
+                    $spreadsheet->getActiveSheet()->getStyle('F'.($rowCount+3))->getFont()->setBold( true );
+                    $spreadsheet->getActiveSheet()->SetCellValue('G'.($rowCount+3), number_format($discount) .$currencyType);
+                    $spreadsheet->getActiveSheet()->getStyle('G'.($rowCount+3))->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+
+
+                    $spreadsheet->getActiveSheet()->SetCellValue('F'.($rowCount+4), 'shipping');
+                    $spreadsheet->getActiveSheet()->getStyle('F'.($rowCount+4))->getFont()->setSize(14);
+                    $spreadsheet->getActiveSheet()->getStyle('F'.($rowCount+4))->getFont()->setBold( true );
+                    $spreadsheet->getActiveSheet()->SetCellValue('G'.($rowCount+4), number_format($shippingCost) .$currencyType);
+                    $spreadsheet->getActiveSheet()->getStyle('G'.($rowCount+4))->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+
+
+                    $spreadsheet->getActiveSheet()->SetCellValue('F'.($rowCount+5), $price2_detail);
+                    $spreadsheet->getActiveSheet()->getStyle('F'.($rowCount+5))->getFont()->setSize(14);
+                    $spreadsheet->getActiveSheet()->getStyle('F'.($rowCount+5))->getFont()->setBold( true );
+                    $spreadsheet->getActiveSheet()->SetCellValue('G'.($rowCount+5), number_format($price2));
+                    $spreadsheet->getActiveSheet()->getStyle('G'.($rowCount+5))->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+
+                    $spreadsheet->getActiveSheet()->SetCellValue('F'.($rowCount+6), 'Vat 7 ' . '%');
+                    $spreadsheet->getActiveSheet()->getStyle('F'.($rowCount+6))->getFont()->setSize(14);
+                    $spreadsheet->getActiveSheet()->getStyle('F'.($rowCount+6))->getFont()->setBold( true );
+                    $spreadsheet->getActiveSheet()->SetCellValue('G'.($rowCount+6), number_format($vat_count).$currencyType);
+                    $spreadsheet->getActiveSheet()->getStyle('G'.($rowCount+6))->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+
+                    $spreadsheet->getActiveSheet()->SetCellValue('F'.($rowCount+7), 'Total');
+                    $spreadsheet->getActiveSheet()->getStyle('F'.($rowCount+7))->getFont()->setSize(14);
+                    $spreadsheet->getActiveSheet()->getStyle('F'.($rowCount+7))->getFont()->setBold( true );
+                    $spreadsheet->getActiveSheet()->SetCellValue('G'.($rowCount+7), number_format($total).$currencyType);
+                    $spreadsheet->getActiveSheet()->getStyle('G'.($rowCount+7))->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_RIGHT);
+
+
+                    $spreadsheet->getActiveSheet()->SetCellValue('A'.($rowCount+9), 'BRAND : FAIRTEX');
+                    $spreadsheet->getActiveSheet()->getStyle('F'.($rowCount+9))->getFont()->setSize(14);
+                    $spreadsheet->getActiveSheet()->getStyle('F'.($rowCount+9))->getFont()->setBold( true );
+
+                    $writer = new Xlsx($spreadsheet);
+
+                    // save file to server and create link
+                    $writer->save('excel/fairtex-invoice.xlsx');
+
+
+                    ?>
             <?php }}?>
 
             <!-?php echo $_SESSION["test"] ?-->

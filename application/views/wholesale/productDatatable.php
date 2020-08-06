@@ -327,9 +327,9 @@
 
     $('.item-list').DataTable({ 
         "ajax": {
-                url : "<?php echo base_url(); ?>/loaddatatable/get_items",
+                url : "<?php echo base_url(); ?>/loaddatatable/get_product_items",
                 type : 'GET' 
-            }, 
+            },  
     });
  
   </script>

@@ -61,8 +61,6 @@ class Loaddatatable extends CI_Controller {
         $discount = "";
         $shippingCost = "";
 
-      
-
         unset(
             $_SESSION['costType'],
             $_SESSION['costType_url'],
@@ -81,11 +79,12 @@ class Loaddatatable extends CI_Controller {
         $code = substr($this->encryption->decrypt($plain_text), 0,3);
        
         
-        if($code != 'new'){
+        if($code != 'new'){ 
 
             $code = substr($this->encryption->decrypt($plain_text), 0,8);
             $price = substr($this->encryption->decrypt($plain_text),8);
 
+           
             $customer = $this->member_model->getCustomerByCustomerName($code);
 
             $customerType = $code;
@@ -94,10 +93,13 @@ class Loaddatatable extends CI_Controller {
             $customerAddress = $customer[0]->customer_address;
             $discount = $customer[0]->discount;
             $shippingCost = $customer[0]->shippingCost;
-
+  
         }else{ 
 
+            echo 'NEW';
             $dataNew = $this->encryption->decrypt($plain_text);
+
+            echo '>>> '.$dataNew;
 
             $str_arr = explode (",", $dataNew);   
 
@@ -124,6 +126,14 @@ class Loaddatatable extends CI_Controller {
             'customerType' => $customerType 
         );
        // echo '>>>>>>>> '.$price;
+    
+       $currencyType = "";
+       if($price == "usd-01" || $price == "usd-05" || $price == "usd-08" ){
+            $currencyType = "USD";
+        }else{
+            $currencyType = "THB";
+        }
+
 
         $dataSession = array(
             'costType'  => $price,
@@ -134,7 +144,8 @@ class Loaddatatable extends CI_Controller {
             'customerAddress' => $customerAddress,
             'discount' => $discount,
             'shippingCost' =>$shippingCost,
-            'customerType' => $customerType 
+            'customerType' => $customerType,
+            'currencyType' =>  $currencyType
         );
 
         $this->session->set_userdata($dataSession);
@@ -143,7 +154,8 @@ class Loaddatatable extends CI_Controller {
         // $this->session->set_userdata('userType','customer');
         // $this->session->set_userdata('customerName', $customerName);        
 
-        $this->load->view('wholesale/productDatatable',$dataCust);   
+      //  $this->load->view('wholesale/productDatatable',$dataCust);   
+      $this->load->view('wholesale/buyProduct', $dataCust);   
     }
 
     public function generateCode($data)
@@ -153,100 +165,7 @@ class Loaddatatable extends CI_Controller {
 
         echo $this->encryption->decrypt($ciphertext);
     }
-
-    public function get_items()
-    { 
-        $draw = intval($this->input->get("draw"));
-        $start = intval($this->input->get("start"));
-        $length = intval($this->input->get("length")); 
-
-        $allProduct = $this->product_model->getAllProduct();
-
-        $data = [];
-        $index = 0;
-        $no = 0;  
-        foreach($allProduct->result() as $r) {
-            $typeCose = "";
-            if($_SESSION["costType"] == "usd-01"){
-                $typeCose = $r->product_usd01;
-            }else if($_SESSION["costType"] == "usd-05"){
-                $typeCose = $r->product_usd05;
-            }else if($_SESSION["costType"] == "usd-08"){
-                $typeCose = $r->product_usd08;
-            }else if($_SESSION["costType"] == "wholesale"){
-                $typeCose = $r->product_wholesale;
-            }else if($_SESSION["costType"] == "wholesale30"){
-                $typeCose = $r->product_wholesale30;
-            }else if($_SESSION["costType"] == "wholesale35"){
-                $typeCose = $r->product_wholesale35;
-            }else{
-                $typeCose = '0';
-            }
-             
-            $product_name = $r->product_name;
-            $product_desc = $r->product_desc;
-            $product_size = $r->product_size;
-            $product_detail_id = $r->product_detail_id;
-            $col = $r->product_colors;
-            $colors = explode('|', $col); 
-            
-            $colorOption = "";  
-           
-            foreach($colors as $c){ 
-                $colorOption .= "<option> $c</option>";  
-            } 
-
-
-            if(isset($_SESSION['userType'])){
-                if($_SESSION['userType'] == 'administrator'){ 
-                    $data[] = array(  
-                        // $no++,
-                        $product_name,
-                        $product_desc,
-                        $product_size, 
-                        '<select class="form-control" title="Pick a number" name="color" id="color'.$index.'"  style="width: 200px;">'
-                            .$colorOption.  
-                        '<option>Pls specify</option></select>',
-                        $typeCose.'$', 
-                        '<input type="number" class="form-control" id="qty'.$index.'" name="qty">', 
-                        '<a onclick="showTableData('.$index.','.$product_detail_id.','."'$product_name'".','."'$product_size'".','.$typeCose.','."'$product_desc'".')" class="btn btn-primary mr-1" style="text-align: center;">ADD</a>',
-                        
-                    );
-                }else{
-                    $data[] = array(  
-                        // $no++,
-                        $product_name,
-                        $product_desc,
-                        $product_size, 
-                        '<select class="form-control" title="Pick a number" name="color" id="color'.$index.'"  style="width: 200px;">'
-                            .$colorOption.  
-                        '<option>Pls specify</option></select>',
-                        $typeCose.'$', 
-                        '<input type="number" class="form-control" style="text-align: center; width: 20%;" id="qty'.$index.'" name="qty">', 
-                        '<a onclick="showTableData('.$index.','.$product_detail_id.','."'$product_name'".','."'$product_size'".','.$typeCose.','."'$product_desc'".')" class="btn btn-primary mr-1" style="text-align: center;">ADD</a>',
-                        
-                    );
-                }
-
-                $index++;
-            }
-           
-        } 
-         
-        $result = array(
-            "draw" => $draw,
-            "recordsTotal" => $allProduct->num_rows(),
-            "recordsFiltered" => $allProduct->num_rows(),
-            "data" => $data
-        );
-
-
-        echo json_encode($result);
-        exit();
-        $this->session->set_flashdata('msg','Success');
-        $this->load->view('wholesale/productDatatable');
-    }
-
+ 
     public function get_product_items()
     { 
         $draw = intval($this->input->get("draw"));
