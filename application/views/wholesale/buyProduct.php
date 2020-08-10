@@ -239,14 +239,6 @@
                           <tbody  style="text-align: center;">
                               <?php $i = 1;
                               
-                              $currency = "";
-                              if($customerType == "usd-01" || $customerType == "usd-05" || $customerType == "usd-08" ){
-                                   $currency = "$";
-                               }else{
-                                   $currency = "฿";
-                               }
-                              
-                              
                               ?> 
                               <?php foreach ($this->cart->contents() as $items): ?>
                           
@@ -255,10 +247,10 @@
                                   <td><?php echo($items['options']['desc']) ?></td>
                                   <td><?php echo($items['options']['size'])  ?></td>
                                   <td><?php echo($items['options']['color'])  ?></td>
-                                  <td><?php echo number_format(($items['price'])). ' '.$currency ?></td>
+                                  <td><?php echo number_format(($items['price'])). ' '.$items['options']['info']; ?></td>
                                   <!-- <td><?php echo($items['qty'])  ?></td> -->
                                   <td style="text-align: center;" class='edit' value="<?= $items['rowid'] ?>" >  <input  style="border-style: none;"  type="text" name="quantity" id="<?= $items['rowid'] ?>" class="text-center" value="<?= $items['qty'] ?>" /> </td>
-                                  <td><?php echo number_format(($items['price']*$items['qty']));?></td>
+                                  <td><?php echo number_format(($items['price']*$items['qty'])) . ' '.$items['options']['info'];?></td>
                                   <td><a class="btn btn-danger btn-rounded btn-sm my-0" style="font-family:verdana;color:white;" onclick="delCart('<?= $items['rowid'] ?>')"><i class="fa fa-trash-o fa-lg"></i> </a></td>
                               </tr>
                               
@@ -632,7 +624,7 @@ function showTableData(tableId,id,name,size,typeCose,description){
       }); 
 }
  
-function addData(tableId,id,name,size,color,typeCose,description){  
+function addData(tableId,id,name,size,color,typeCose,currencyCode,description){  
  
     var qtyId = "qty"+tableId;
     var qty = document.getElementById(qtyId).value; 
@@ -645,6 +637,7 @@ function addData(tableId,id,name,size,color,typeCose,description){
               size : size,
               color : color,
               cost : typeCose,
+							currencyCode : currencyCode,
               qty : qty,
               desc : description},
        error: function() {

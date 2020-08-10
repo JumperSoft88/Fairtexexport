@@ -245,7 +245,7 @@ class Loaddatatable extends CI_Controller {
                         $color ,
                         number_format($typeCose). $currencyCode, 
                         '<input type="number" min="0" class="form-control" style="width:100px;" id="qty'.$index.'" name="qty">', 
-                        '<a onclick="addData('.$index.','.$product_id.','."'$product_name'".','."'$product_size'".','."'$color'".','.$typeCose.','."'$product_desc'".')" class="btn btn-primary mr-1" style="text-align:center;color:white;background-color:orange;"> <i class="fa fa-shopping-cart" aria-hidden="true"></i></a>',
+                        '<a onclick="addData('.$index.','.$product_id.','."'$product_name'".','."'$product_size'".','."'$color'".','.$typeCose.','."'$currencyCode'".','."'$product_desc'".')" class="btn btn-primary mr-1" style="text-align:center;color:white;background-color:orange;"> <i class="fa fa-shopping-cart" aria-hidden="true"></i></a>',
                         
                     );
                 }else{
@@ -258,7 +258,7 @@ class Loaddatatable extends CI_Controller {
                         $color,
                         number_format($typeCose).$currencyCode, 
                         '<input type="number" min="0" class="form-control" style="text-align: center; width: 100px;" id="qty'.$index.'" name="qty">', 
-                        '<a onclick="addData('.$index.','.$product_id.','."'$product_name'".','."'$product_size'".','."'$color'".','.$typeCose.','."'$product_desc'".')" class="btn btn-primary mr-1" style="text-align: center;color:white;background-color:orange;"> <i class="fa fa-shopping-cart" aria-hidden="true"></i></a>',
+                        '<a onclick="addData('.$index.','.$product_id.','."'$product_name'".','."'$product_size'".','."'$color'".','.$typeCose.','."'$currencyCode'".','."'$product_desc'".')" class="btn btn-primary mr-1" style="text-align: center;color:white;background-color:orange;"> <i class="fa fa-shopping-cart" aria-hidden="true"></i></a>',
                         
                     );
                 }
@@ -292,14 +292,21 @@ class Loaddatatable extends CI_Controller {
         $qty = $this->input->post('qty'); 
         $desc = $this->input->post('desc'); 
 
-        console.log($id);
+		console.log($id);
+		
+		// $currencyCode = "";
+		// if($_SESSION['currencyType'] == 'USD'){
+		// 	$currencyCode = ' $';
+		// }else{
+		// 	$currencyCode = ' ฿';
+		// } 
   
         $product = array(
             'id'      => $id,
             'name'    => $name, 
             'qty'     => $qty,
-            'price'   => $cost,
-            'options' => array('size' => $size, 'color' => $color, 'desc' => $desc)
+			'price'   => $cost, 
+            'options' => array('size' => $size, 'color' => $color, 'desc' => $desc) 
             
         );
      
@@ -315,19 +322,29 @@ class Loaddatatable extends CI_Controller {
         $name = $this->input->post('name');
         $size = $this->input->post('size');
         $color = $this->input->post('color');
-        $cost =  $this->input->post('cost');
+		$cost =  $this->input->post('cost');
+		$currencyCode = $this->input->post('currencyCode');;
         //$costSprit = explode("$", $cost);
         $qty = $this->input->post('qty'); 
         $desc = $this->input->post('desc'); 
 
-        console.log($id);
+		console.log($id);
+		
+
+		// $currencyCode = "";
+		// if($_SESSION['currencyType'] == 'USD'){
+		// 	$currencyCode = ' $';
+		// }else{
+		// 	$currencyCode = ' ฿';
+		// } 
+  
   
         $product = array(
             'id'      => $id,
             'name'    => $name, 
             'qty'     => $qty,
             'price'   => $cost,
-            'options' => array('size' => $size, 'color' => $color, 'desc' => $desc)
+            'options' => array('size' => $size, 'color' => $color, 'desc' => $desc, 'info' => $currencyCode)
             
         );
      
