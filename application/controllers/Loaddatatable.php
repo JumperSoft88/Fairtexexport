@@ -21,6 +21,11 @@ class Loaddatatable extends CI_Controller {
 
         echo '>> '.$_SESSION['costType'];
         echo '-> '.$_SESSION['customerName'];
+        
+
+        unset(
+            $_SESSION['currencyType']
+        );
 
         
         if(isset($_SESSION['costType'])){ 

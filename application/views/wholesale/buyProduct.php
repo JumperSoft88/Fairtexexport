@@ -237,18 +237,28 @@
                               </tr>
                           </thead>
                           <tbody  style="text-align: center;">
-                              <?php $i = 1; ?> 
+                              <?php $i = 1;
+                              
+                              $currency = "";
+                              if($customerType == "usd-01" || $customerType == "usd-05" || $customerType == "usd-08" ){
+                                   $currency = "$";
+                               }else{
+                                   $currency = "฿";
+                               }
+                              
+                              
+                              ?> 
                               <?php foreach ($this->cart->contents() as $items): ?>
                           
                               <tr> 
-                                  <td><?php echo($items['name'])  ?></td>
+                                  <td><?php echo($items['name']) ?></td>
                                   <td><?php echo($items['options']['desc']) ?></td>
                                   <td><?php echo($items['options']['size'])  ?></td>
                                   <td><?php echo($items['options']['color'])  ?></td>
-                                  <td><?php echo number_format(($items['price'])); if($_SESSION['currencyType'] == 'USD'){ echo ' $';}else{ echo ' ฿';} ?></td>
+                                  <td><?php echo number_format(($items['price'])). ' '.$currency ?></td>
                                   <!-- <td><?php echo($items['qty'])  ?></td> -->
                                   <td style="text-align: center;" class='edit' value="<?= $items['rowid'] ?>" >  <input  style="border-style: none;"  type="text" name="quantity" id="<?= $items['rowid'] ?>" class="text-center" value="<?= $items['qty'] ?>" /> </td>
-                                  <td><?php echo number_format(($items['price']*$items['qty'])); if($_SESSION['currencyType'] == 'USD'){ echo ' $';}else{ echo ' ฿';}  ?></td>
+                                  <td><?php echo number_format(($items['price']*$items['qty']));?></td>
                                   <td><a class="btn btn-danger btn-rounded btn-sm my-0" style="font-family:verdana;color:white;" onclick="delCart('<?= $items['rowid'] ?>')"><i class="fa fa-trash-o fa-lg"></i> </a></td>
                               </tr>
                               

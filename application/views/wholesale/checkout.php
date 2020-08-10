@@ -216,6 +216,7 @@
             <div class="col-8"></div> 
             <div class="col-2">
               <div class="row"> 
+              <input type="hidden"  min="0" style=" text-align: right;font-weight: bold;" size="150" class="form-control" id="currType" name="currType" value="<?php if($_SESSION['currencyType'] == 'USD'){ echo ' $';}else{ echo ' ฿';}  ?>">
                 <div class="col-6" style="text-align: right;" ><h6>Vat %</h6></div> <input type="hidden"  min="0" style=" text-align: right;font-weight: bold;" size="150" class="form-control" id="summaryHide" name="summaryHide" value="<?=  number_format($this->cart->total()) ?>">
                 <div class="col-6" style="text-align: right;"><input type="number"  min="0" style="text-align: right;font-weight: bold;" size="50" class="form-control" id="vat" name="vat" onchange="totalFunction()"> </div> 
               </div>
@@ -975,7 +976,7 @@
       var invoice_consignee = document.getElementById("consigee").value;
       var invoice_ship_to = document.getElementById("shipTo").value;
       var costType = document.getElementById("costType").value;
-      
+      var currType = document.getElementById("currType").value;
  
      // var summary = document.getElementById("sum").value.replace(",", "");
       var summary = document.getElementById("total").value.replace(",", "");
@@ -1011,10 +1012,10 @@
       }
   
       var headingDiv = document.getElementById("summary"); 
-          headingDiv.innerHTML =  new Intl.NumberFormat().format(parseInt(sumInvoice)+parseInt(perc))+'$' ;
+          headingDiv.innerHTML =  new Intl.NumberFormat().format(parseInt(sumInvoice)+parseInt(perc))+currType ;
 
         // $('#sum').val(sumInvoice); 
-        $('#input').val(new Intl.NumberFormat().format(parseInt(perc))+'$'); 
+        $('#input').val(new Intl.NumberFormat().format(parseInt(perc))+currType); 
 
         //sessionStorage.setItem("lastname", "Smith");
 
